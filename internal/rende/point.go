@@ -5,16 +5,16 @@ import (
 )
 
 type Point struct {
-	x float32
-	y float32
-	z float32
+	X float32
+	Y float32
+	Z float32
 }
 
 func NewPoint(x, y, z float32) *Point {
 	return &Point{
-		x: x,
-		y: y,
-		z: z,
+		X: x,
+		Y: y,
+		Z: z,
 	}
 }
 
@@ -46,15 +46,15 @@ func convertX(value, center float32) float32{
 
 
 func (p *Point) ToString() string {
-	return fmt.Sprintf("Point [%f, %f, %f]", p.x, p.y, p.z)
+	return fmt.Sprintf("Point [%f, %f, %f]", p.X, p.Y, p.Z)
 }
 
 func (p *Point) Convert(screen ScreenSize) [3]float32 {
-	relativeX := convertX(p.x, screen.Width / 2)
-	relativeY := convertY(p.y, screen.Height / 2)
+	relativeX := convertX(p.X, screen.Width / 2)
+	relativeY := convertY(p.Y, screen.Height / 2)
 	return [3]float32{
 		relativeX,
 		relativeY,
 		0,
-	}
+	}	
 }

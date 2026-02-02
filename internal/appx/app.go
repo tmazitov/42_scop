@@ -4,12 +4,15 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"log"
+	"github.com/tmazitov/42_scop/internal/rende"
 )
 
 type App struct {
 	config	*Config
 	window	*Window
 	core	uint32
+	objects []*rende.Object
+	ScreenSize rende.ScreenSize
 }
 
 
@@ -54,7 +57,20 @@ func NewApp(config *Config) (*App, error) {
 		config: config,
 		window: window,
 		core: core,
+		objects: nil,
+		ScreenSize: rende.ScreenSize{
+			Height: float32(config.Window().Height),
+			Width: float32(config.Window().Width),
+		},
 	}, nil
+}
+
+func (a *App) AddObject(obj *rende.Object) {
+	a.objects = append(a.objects, obj)
+}
+
+func (a *App) Objects() []*rende.Object{
+	return a.objects
 }
 
 func (a *App) Core() uint32 {

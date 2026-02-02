@@ -14,13 +14,6 @@ import (
 // makeVao initializes and returns a vertex array from the points provided.
 
 
-var (
-	triangle = []*rende.Point{
-		rende.NewPoint(270, 180, 0),
-		rende.NewPoint(810, 180, 0),
-		rende.NewPoint(810, 560, 0),
-	}
-)
 
 func main() {
 	runtime.LockOSThread()
@@ -35,23 +28,30 @@ func main() {
 	}
 	defer app.Close()
 
-	screenSize := rende.ScreenSize{
-		Height: float32(config.Window().Height),
-		Width: float32(config.Window().Width),
-	}
-	vao := rende.MakeVao(screenSize, triangle)
-	log.Println("vaoted")
+	obj := rende.NewObject("test", rende.NewPoint(0, 0, 0), []*rende.Point{
+		rende.NewPoint(200, 180, 0), // A
+		rende.NewPoint(810, 180, 0), // B
+		rende.NewPoint(270, 560, 0), // D
+		rende.NewPoint(810, 560, 0), // C
+	})
+
+	app.AddObject(obj)
+
 	for !app.Window().Core().ShouldClose() {
-		draw(vao, app)
+		draw(app)
 	}
 }
 
-func draw(vao uint32, app *appx.App) {
+func draw(app *appx.App) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.UseProgram(app.Core())
 
-	gl.BindVertexArray(vao)
-	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)))
+	for _, obj := range app.Objects() {
+		gl.BindVertexArray(obj.VAO(app.ScreenSize))
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+		gl.DrawElements(gl.TRIANGLES, obj.IndicesCount(), gl.UNSIGNED_INT, gl.PtrOffset(0))
+		gl.BindVertexArray(0)
+	}
 
 	glfw.PollEvents()
 	app.Window().Core().SwapBuffers()

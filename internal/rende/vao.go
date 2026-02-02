@@ -2,9 +2,9 @@ package rende
 
 import (
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"fmt"
+	// "fmt"
 )
-func MakeVao(screen ScreenSize, points []*Point) uint32 {
+func MakeVao(screen ScreenSize, indices []uint32, points []*Point) uint32 {
 
 	var convertedPoints = make([]float32, 0, len(points) * 3)
 	for _, point := range points {
@@ -12,8 +12,14 @@ func MakeVao(screen ScreenSize, points []*Point) uint32 {
 		for _, value := range convertedValue {
 			convertedPoints = append(convertedPoints, value)
 		}
-		fmt.Println(point.ToString(), convertedValue)
+		// fmt.Println(point.ToString(), convertedValue)
 	}
+
+	// Create EBO (element/index buffer)
+	var ebo uint32
+	gl.GenBuffers(1, &ebo)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
 	
 	var vbo uint32
 	gl.GenBuffers(1, &vbo)
@@ -25,7 +31,8 @@ func MakeVao(screen ScreenSize, points []*Point) uint32 {
 	gl.BindVertexArray(vao)
 	gl.EnableVertexAttribArray(0)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, nil)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
+	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 
 	return vao
 }
