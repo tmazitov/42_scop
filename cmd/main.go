@@ -8,33 +8,18 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/tmazitov/42_scop/internal/appx"
+	"github.com/tmazitov/42_scop/internal/rende"
 )
 
 // makeVao initializes and returns a vertex array from the points provided.
-func makeVao(points []float32) uint32 {
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, 4*len(points), gl.Ptr(points), gl.STATIC_DRAW)
 
-	var vao uint32
-	gl.GenVertexArrays(1, &vao)
-	gl.BindVertexArray(vao)
-	gl.EnableVertexAttribArray(0)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, nil)
-
-	return vao
-}
 
 var (
-	triangle = []float32{
-		0.5, 0.5, 0, // left
-		-0.5, -0.5, 0, // left
-		0.5, -0.5, 0, // right
-		-0.5, 0.5, 0, // right
+	triangle = []*rende.Point{
+		rende.NewPoint(270, 180, 0),
+		rende.NewPoint(810, 180, 0),
+		rende.NewPoint(810, 560, 0),
 	}
-
 )
 
 func main() {
@@ -50,8 +35,13 @@ func main() {
 	}
 	defer app.Close()
 
+	screenSize := rende.ScreenSize{
+		Height: float32(config.Window().Height),
+		Width: float32(config.Window().Width),
+	}
+	vao := rende.MakeVao(screenSize, triangle)
+	log.Println("vaoted")
 	for !app.Window().Core().ShouldClose() {
-		vao := makeVao(triangle)
 		draw(vao, app)
 	}
 }
@@ -61,7 +51,7 @@ func draw(vao uint32, app *appx.App) {
 	gl.UseProgram(app.Core())
 
 	gl.BindVertexArray(vao)
-	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)/3))
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(triangle)))
 
 	glfw.PollEvents()
 	app.Window().Core().SwapBuffers()
