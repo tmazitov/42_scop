@@ -1,22 +1,50 @@
 package app
 
-import "github.com/go-gl/glfw/v3.2/glfw"
+import (
+	// "github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/glfw/v3.2/glfw"
+)
+
 
 type Window struct {
-	height int
-	width  int
-	core   *glfw.Window
+	opts	*WindowOptions
+	core	*glfw.Window
 }
 
-func NewWindow(width, height int) (*Window, error) {
-	core, err := glfw.CreateWindow(width, height, "Conway's Game of Life", nil, nil)
+type WindowOptions struct {
+	Height int
+	Width int
+	Title string
+}
+
+func initGlfw(opts *WindowOptions) (*glfw.Window, error) {
+	if err := glfw.Init(); err != nil {
+		return nil, err
+	}
+
+	glfw.WindowHint(glfw.Resizable, glfw.True)
+	glfw.WindowHint(glfw.ContextVersionMajor, 4) // OR 2
+	glfw.WindowHint(glfw.ContextVersionMinor, 1)
+	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
+	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
+
+	window, err := glfw.CreateWindow(opts.Width, opts.Height, opts.Title, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	window.MakeContextCurrent()
+
+	return window, nil
+}
+
+func NewWindow(opts *WindowOptions) (*Window, error) {
+	core, err := initGlfw(opts)
 	if err != nil {
 		return nil, err
 	}
 	core.MakeContextCurrent()
 	return &Window{
-		height: height,
-		width:  width,
+		opts:	opts,
 		core:   core,
 	}, nil
 }
@@ -28,3 +56,7 @@ func (w *Window) Core() *glfw.Window {
 func (w *Window) Run() {
 
 }
+
+func (w *Window) Close() {
+	glfw.Terminate()
+} 
