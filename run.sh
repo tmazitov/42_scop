@@ -1,1 +1,1 @@
-go build . && ./42_scop
+go build -o scop ./cmd  && ./scop

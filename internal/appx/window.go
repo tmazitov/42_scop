@@ -1,4 +1,4 @@
-package app
+package appx
 
 import (
 	// "github.com/go-gl/gl/v3.3-core/gl"

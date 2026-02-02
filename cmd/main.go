@@ -7,12 +7,7 @@ import (
 	// OR: github.com/go-gl/gl/v2.1/gl
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	appx "github.com/tmazitov/42_scop/internal/app"
-)
-
-const (
-	width  = 500
-	height = 500
+	"github.com/tmazitov/42_scop/internal/appx"
 )
 
 // makeVao initializes and returns a vertex array from the points provided.
