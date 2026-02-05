@@ -2,29 +2,20 @@ package rende
 
 type Object struct {
 	name string
-	pos *Point
-	shape []*Point
+	shape []*Vertex
 	indices []uint32
 }
 
-func NewObject(name string, pos *Point, shape []*Point) *Object {
+func NewObject(name string, shape []*Vertex, indices []uint32) *Object {
 	return &Object{
 		name: name,
 		shape: shape,
-		pos: pos,
-		indices: []uint32{
-			0, 1, 2, // First triangle
-			1, 2, 3, // Second triangle
-		},
+		indices: indices,
 	}
 }
 
-func (o *Object) Shape() []*Point{
+func (o *Object) Shape() []*Vertex{
 	return o.shape
-}
-
-func (o *Object) Pos() *Point{
-	return o.pos
 }
 
 func (o *Object) VAO(screen ScreenSize) uint32 {

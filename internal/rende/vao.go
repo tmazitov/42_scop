@@ -4,15 +4,11 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	// "fmt"
 )
-func MakeVao(screen ScreenSize, indices []uint32, points []*Point) uint32 {
+func MakeVao(screen ScreenSize, indices []uint32, points []*Vertex) uint32 {
 
-	var convertedPoints = make([]float32, 0, len(points) * 3)
+	var convertedVertex = make([]float32, 0, len(points) * 3)
 	for _, point := range points {
-		convertedValue := point.Convert(screen)
-		for _, value := range convertedValue {
-			convertedPoints = append(convertedPoints, value)
-		}
-		// fmt.Println(point.ToString(), convertedValue)
+		convertedVertex = append(convertedVertex, point.Vector()...)
 	}
 
 	// Create EBO (element/index buffer)
@@ -24,7 +20,7 @@ func MakeVao(screen ScreenSize, indices []uint32, points []*Point) uint32 {
 	var vbo uint32
 	gl.GenBuffers(1, &vbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, 4*len(convertedPoints), gl.Ptr(convertedPoints), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, 4*len(convertedVertex), gl.Ptr(convertedVertex), gl.STATIC_DRAW)
 
 	var vao uint32
 	gl.GenVertexArrays(1, &vao)

@@ -4,12 +4,15 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"log"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/rende"
 )
 
 type App struct {
+	controller *controller
 	config	*Config
 	window	*Window
+	camera	*Camera
 	core	uint32
 	objects []*rende.Object
 	ScreenSize rende.ScreenSize
@@ -53,16 +56,32 @@ func NewApp(config *Config) (*App, error) {
 		return nil, err
 	}
 
-	return &App{
+	app := &App{
 		config: config,
 		window: window,
 		core: core,
+		camera: NewCamera(mgl32.Vec3{0, 0, 3}, mgl32.Vec3{0, 1, 0}, -90, 0),
 		objects: nil,
+		controller: nil, 
 		ScreenSize: rende.ScreenSize{
 			Height: float32(config.Window().Height),
 			Width: float32(config.Window().Width),
 		},
-	}, nil
+	}
+
+	app.controller = newController(app)
+
+	app.controller.BindMouseControl()
+
+	return app, nil
+}
+
+func (a *App) Process() {
+	a.controller.processInput(a.window.Core(), a.camera)
+}
+
+func (a *App) Camera() *Camera {
+	return a.camera
 }
 
 func (a *App) AddObject(obj *rende.Object) {
