@@ -2,7 +2,7 @@ package appx
 
 import (
     "github.com/go-gl/glfw/v3.2/glfw"
-	"fmt"
+	// "fmt"
 )
 
 
@@ -11,8 +11,6 @@ func (c *controller) processInput(window *glfw.Window, camera *Camera) {
 	currentFrame := float32(glfw.GetTime())
 	deltaTime := currentFrame - c.lastFrame
 	c.lastFrame = currentFrame
-
-	fmt.Println("delta", deltaTime)
 
     if window.GetKey(glfw.KeyW) == glfw.Press {
         camera.ProcessKeyboard("FORWARD", deltaTime)

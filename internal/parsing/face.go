@@ -1,52 +1,53 @@
 package parsing
 
 import (
-	"strings"
-	"strconv"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 func parseFace(line string) ([]uint32, error) {
 	parts := strings.Split(line, " ")
 	if len(parts) < 4 {
-		return nil, ErrInvalidFLine
+		return nil, ErrInvalidFaceLine
 	}
 
-	// fmt.Println(parts)
-
-	vector := make([]uint32, 0, len(parts) - 1)
-
+	// Parse vertex indices (handle v, v/vt, v/vt/vn formats)
+	vector := make([]uint32, 0, len(parts)-1)
 	for _, part := range parts[1:] {
-		v, err := strconv.ParseUint(part, 10, 32)
+		// Split by "/" to handle texture and normal coordinates
+		// Example: "1/2/3" -> we want just "1"
+		vertexData := strings.Split(part, "/")
+		
+		v, err := strconv.ParseUint(vertexData[0], 10, 32)
 		if err != nil {
-			return nil, ErrInvalidFLine
+			return nil, ErrInvalidFaceLine
 		}
-
-		vector = append(vector, uint32(v))
+		
+		// OBJ format uses 1-based indexing, convert to 0-based
+		if v == 0 {
+			return nil, fmt.Errorf("invalid vertex index: 0 (OBJ uses 1-based indexing)")
+		}
+		vector = append(vector, uint32(v-1))
 	}
-	
+
+	// Triangle - no triangulation needed
 	if len(vector) == 3 {
 		return vector, nil
 	}
 
-	// Triangulated version
-
-	triangleCount := (len(vector) - 3) + 1
-	triangulated := make([]uint32, 0, triangleCount * 3)
-
-	for index := range vector {
-		if index == 0 || index == 1 {
-			continue
-		}
-
-		triangulated = append(triangulated, []uint32{
-			vector[0],
-			vector[index - 1],
-			vector[index],
-		}...)
-	}
+	// Triangulate polygon using fan triangulation
+	triangleCount := len(vector) - 2
+	triangulated := make([]uint32, 0, triangleCount*3)
 	
-	fmt.Println("triangulated to :", triangulated)
+	for i := 1; i < len(vector)-1; i++ {
+		triangulated = append(triangulated, 
+			vector[0],
+			vector[i],
+			vector[i+1],
+		)
+	}
 
+	fmt.Println("line", line, "triangulated to:", triangulated)
 	return triangulated, nil
 }

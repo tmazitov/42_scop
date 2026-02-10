@@ -9,7 +9,7 @@ import (
 func parseVertex(line string) (*rende.Vertex, error) {
 	parts := strings.Split(line, " ")
 	if len(parts) != 4 {
-		return nil, ErrInvalidVLine
+		return nil, ErrInvalidVertexLine
 	}
 
 	vector := [3]float32{0, 0, 0}
@@ -17,7 +17,7 @@ func parseVertex(line string) (*rende.Vertex, error) {
 	for index, part := range parts[1:] {
 		value, err := strconv.ParseFloat(part, 32)
 		if err != nil {
-			return nil, ErrInvalidVLine
+			return nil, ErrInvalidVertexLine
 		}
 		vector[index] = float32(value)
 	}

@@ -29,7 +29,7 @@ func main() {
 	}
 	defer app.Close()
 
-	obj, err := parsing.ParseObj("./resources/42.obj")
+	obj, err := parsing.ParseObj("./resources/teapot.obj")
 	if err != nil {
 		log.Fatal(err)
 	}
