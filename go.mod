@@ -7,4 +7,7 @@ require (
 	github.com/go-gl/glfw v0.0.0-20250301202403-da16c1255728
 )
 
-require github.com/go-gl/mathgl v1.2.0 // indirect
+require (
+	github.com/go-gl/mathgl v1.2.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
+)

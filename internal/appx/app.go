@@ -46,7 +46,7 @@ func initOpenGL() (uint32, error) {
 
 func NewApp(config *Config) (*App, error) {
 
-	window, err := NewWindow(config.Window())
+	window, err := NewWindow(config.Window)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +64,8 @@ func NewApp(config *Config) (*App, error) {
 		objects: nil,
 		controller: nil, 
 		ScreenSize: rende.ScreenSize{
-			Height: float32(config.Window().Height),
-			Width: float32(config.Window().Width),
+			Height: float32(config.Window.Height),
+			Width: float32(config.Window.Width),
 		},
 	}
 

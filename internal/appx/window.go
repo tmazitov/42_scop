@@ -53,10 +53,6 @@ func (w *Window) Core() *glfw.Window {
 	return w.core
 }
 
-func (w *Window) Run() {
-
-}
-
 func (w *Window) Close() {
 	glfw.Terminate()
 } 
