@@ -24,7 +24,7 @@ func main() {
 	}
 	defer app.Close()
 
-	obj, err := parsing.ParseObj("./resources/teapot.obj")
+	obj, err := parsing.ParseObj(config.ObjectPath)
 	if err != nil {
 		log.Fatal(err)
 	}

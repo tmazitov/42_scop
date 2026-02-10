@@ -1,9 +1,10 @@
 package rende
 
 type Object struct {
-	name string
-	shape []*Vertex
+	name 	string
+	shape 	[]*Vertex
 	indices []uint32
+	vao 	uint32
 }
 
 func NewObject(name string, shape []*Vertex, indices []uint32) *Object {
@@ -11,7 +12,12 @@ func NewObject(name string, shape []*Vertex, indices []uint32) *Object {
 		name: name,
 		shape: shape,
 		indices: indices,
+		vao: 0,
 	}
+}
+
+func (o *Object) Name() string {
+	return o.name
 }
 
 func (o *Object) Shape() []*Vertex{
@@ -19,7 +25,14 @@ func (o *Object) Shape() []*Vertex{
 }
 
 func (o *Object) VAO(screen ScreenSize) uint32 {
-	return MakeVao(screen, o.indices, o.shape)
+
+	if o.vao != 0 {
+		return o.vao
+	}
+
+	o.vao = MakeVao(screen, o.indices, o.shape)
+
+	return o.vao 
 }
 
 func (o *Object) NodeCount() int32 {
