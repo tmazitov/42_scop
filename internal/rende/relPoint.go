@@ -6,14 +6,14 @@ type RelativePoint struct {
 	Z float32
 }
 
-func (p *RelativePoint) Convert(screen ScreenSize) [3]float32 {
+func (p *RelativePoint) ConvertToVertex(screen ScreenSize) *Vertex {
 	relativeX := convertX(p.X, screen.Width / 2)
 	relativeY := convertY(p.Y, screen.Height / 2)
-	return [3]float32{
+	return NewVertex([3]float32{
 		relativeX,
 		relativeY,
 		0,
-	}	
+	})	
 }
 
 func convertY(value, center float32) float32{

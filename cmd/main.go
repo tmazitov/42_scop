@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.AddObject(obj)
+	app.AddObjects(obj)
 
 	render(app, config)
 }

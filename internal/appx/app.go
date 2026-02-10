@@ -5,6 +5,8 @@ import (
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/ui"
+	"github.com/tmazitov/42_scop/internal/clr"
 	"log"
 )
 
@@ -13,6 +15,7 @@ type App struct {
 	config     *Config
 	window     *Window
 	camera     *Camera
+	ui		   *ui.UI
 	objects    []*rende.Object
 	ScreenSize rende.ScreenSize
 }
@@ -52,6 +55,7 @@ func NewApp(config *Config) (*App, error) {
 		camera:  NewCamera(mgl32.Vec3{0, 0, 3}, mgl32.Vec3{0, 1, 0}, -90, 0),
 		objects: nil,
 		controller: nil,
+		ui:			nil,
 		ScreenSize: rende.ScreenSize{
 			Height: float32(config.Window.Height),
 			Width:  float32(config.Window.Width),
@@ -60,6 +64,12 @@ func NewApp(config *Config) (*App, error) {
 
 	app.controller = newController(app)
 	app.controller.BindMouseControl()
+
+	app.ui = ui.NewUI(app.ScreenSize)
+	app.ui.AddButton( ui.NewButton().
+		SetPos(&rende.Pos{X: 10, Y: 10, Z: 1}).
+		SetSize(40, 40).
+		SetColor(clr.NewColor(66, 96, 150)))
 
 	return app, nil
 }
@@ -73,8 +83,8 @@ func (a *App) Camera() *Camera {
 	return a.camera
 }
 
-func (a *App) AddObject(obj *rende.Object) {
-	a.objects = append(a.objects, obj)
+func (a *App) AddObjects(objs ...*rende.Object) {
+	a.objects = append(a.objects, objs...)
 }
 
 func (a *App) Objects() []*rende.Object {
