@@ -15,6 +15,7 @@ type App struct {
 	config     *Config
 	window     *Window
 	camera     *Camera
+	state	   *State
 	ui		   *ui.UI
 	objects    []*rende.Object
 	ScreenSize rende.ScreenSize
@@ -52,6 +53,7 @@ func NewApp(config *Config) (*App, error) {
 	app := &App{
 		config:  config,
 		window:  window,
+		state:	 NewState(),
 		camera:  NewCamera(mgl32.Vec3{0, 0, 3}, mgl32.Vec3{0, 1, 0}, -90, 0),
 		objects: nil,
 		controller: nil,
@@ -69,7 +71,19 @@ func NewApp(config *Config) (*App, error) {
 	app.ui.AddButton( ui.NewButton().
 		SetPos(&rende.Pos{X: 10, Y: 10, Z: 1}).
 		SetSize(40, 40).
-		SetColor(clr.NewColor(66, 96, 150)))
+		SetColor(clr.NewColor(0, 0, 255)).
+		SetOnClick(func (xpos, ypos float32) error {
+			
+			app.state.IsVertexOnly = !app.state.IsVertexOnly
+
+			if app.state.IsVertexOnly {
+				gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+			} else {
+				gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+			}
+
+			return nil
+		}))
 
 	return app, nil
 }

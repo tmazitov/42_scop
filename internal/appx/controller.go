@@ -2,6 +2,8 @@ package appx
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
+	// "fmt"
+	"log"
 )
 
 type controller struct {
@@ -57,8 +59,24 @@ func (c *controller) processInput(window *glfw.Window, camera *Camera) {
 	}
 }
 
-// Mouse callback for camera look
-func (c *controller) mouseCallback(w *glfw.Window, xpos float64, ypos float64) {
+
+func (c *controller) mouseClickCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+
+	if button == glfw.MouseButtonLeft && action == glfw.Release {
+		xpos, ypos := window.GetCursorPos()
+	
+		action := c.app.ui.IsPressed(float32(xpos), float32(ypos))
+		if action == nil {
+			return ;
+		}
+		err := action(float32(xpos), float32(ypos))
+		if err != nil {
+			log.Println("ui pressed error : ", err)
+		}
+	}
+}
+
+func (c *controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float64) {
 	if c.firstMouse {
 		c.lastX = xpos
 		c.lastY = ypos
@@ -71,8 +89,11 @@ func (c *controller) mouseCallback(w *glfw.Window, xpos float64, ypos float64) {
 	c.lastX = xpos
 	c.lastY = ypos
 
-	c.app.camera.ProcessMouseMovement(xoffset, yoffset)
+	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		c.app.camera.ProcessMouseMovement(xoffset, yoffset)
+	}
 }
+
 
 // Bind mouse control to window
 func (c *controller) BindMouseControl() {
@@ -80,7 +101,8 @@ func (c *controller) BindMouseControl() {
 	
 	// Capture and hide cursor
 	// window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
-	
+
 	// Set cursor position callback
-	window.SetCursorPosCallback(c.mouseCallback)
+	window.SetCursorPosCallback(c.mouseMoveCallback)
+	window.SetMouseButtonCallback(c.mouseClickCallback)
 }

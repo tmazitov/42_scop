@@ -22,8 +22,6 @@ func (a *App) DrawScene(projection mgl32.Mat4) {
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrixf(&projection[0])
 
- 	gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
-
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
 	

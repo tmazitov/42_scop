@@ -9,7 +9,7 @@ import (
 
 type Button struct {
 	id 		int
-	onClick func()
+	onClickHandler ElementHandleFunc
 	pos		*rende.Pos
 	color	*clr.Color
 	width 	float32
@@ -29,7 +29,7 @@ func NewButton() *Button {
 		pos: nil,
 		width: 0,
 		height: 0,
-		onClick: nil,
+		onClickHandler: nil,
 		color: buttonDefaultColor,
 	}
 }
@@ -73,7 +73,19 @@ func (b *Button) SetSize(height, width float32) *Button{
 	return b
 }
 
-func (b *Button) SetOnClick(onClickHandler func ()) *Button{
-	b.onClick = onClickHandler
+func (b *Button) SetOnClick(onClickHandler ElementHandleFunc) *Button{
+	b.onClickHandler = onClickHandler
 	return b
+}
+
+func (b *Button) IsPressed(xpos, ypos float32) bool {
+
+	return xpos >= b.pos.X &&
+			xpos <= b.pos.X + b.width &&
+			ypos >= b.pos.Y &&
+			ypos <= b.pos.Y + b.height 
+}
+
+func (b *Button) OnClickHandler() ElementHandleFunc {
+	return b.onClickHandler
 }
