@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	ErrInvalidVertexLine = 	errors.New("parsing error : invalid 'v' row appeared")
-	ErrInvalidFaceLine = 	errors.New("parsing error : invalid 'f' row appeared")
-	ErrNormFailed =		errors.New("parsing error : vertices normalization failed")
+	ErrInvalidVertexLine = 	errors.New("obj parsing error : 'v' row is invalid")
+	ErrInvalidFaceLine = 	errors.New("obj parsing error : 'f' row is invalid")
+	ErrNormFailed =			errors.New("obj parsing error : vertices normalization failed")
 )

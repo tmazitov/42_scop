@@ -9,15 +9,30 @@ type Object struct {
 	shape 	[]*geom.Vertex
 	indices []uint32
 	vao 	uint32
+	materials []*Material
 }
 
-func NewObject(name string, shape []*geom.Vertex, indices []uint32) *Object {
+func NewObject(name string) *Object {
 	return &Object{
 		name: name,
-		shape: shape,
-		indices: indices,
+		shape: nil,
+		indices: nil,
+		materials: nil,
 		vao: 0,
 	}
+}
+
+func (o *Object) SetShape(shape []*geom.Vertex) *Object {
+	o.shape = shape
+	return o
+}
+func (o *Object) SetIndices(indices []uint32) *Object {
+	o.indices = indices
+	return o
+}
+func (o *Object) SetMaterials(materials []*Material) *Object {
+	o.materials = materials
+	return o
 }
 
 func (o *Object) Name() string {

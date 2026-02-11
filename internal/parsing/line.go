@@ -1,21 +1,24 @@
 package parsing
 
-var (
-	vLine = "v"
-	fLine = "f"
+import (
+	"strings"
 )
 
-func filterLine(line string) string {
+func filterObjFileLine(line string) ([]string) {
 	if len(line) == 0 {
-		return "x"
+		return nil
 	}
 
-	switch (line[0]) {
-	case 'v':
-		return "v"
-	case 'f':
-		return "f"
+	args := strings.Split(line, " ")
+	if len(args) == 0 {
+		return nil
+	}
+
+
+	switch (args[0]) {
+	case "v", "f", "mtllib":
+		return args
 	default:
-		return "x"
+		return nil
 	} 
 }
