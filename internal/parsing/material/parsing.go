@@ -10,5 +10,7 @@ var (
 	mtlParsingActionsDictionary = map[mtlLineType]mtlParsingFunc{
 		mtlNewMaterial: newMaterialHandler, 
 		mtlShininess: shininessHandler,
+		mtlAmbientColor: ambientColorHandler,
+		mtlDiffuseColor: diffuseColorHandler,
 	}
 )

@@ -21,6 +21,8 @@ const (
 var mtlLineDictionary = map[string]mtlLineType {
 	"newmtl" : mtlNewMaterial,
 	"Ns"	 : mtlShininess,
+	"Ka"	 : mtlAmbientColor,
+	"Kd"	 : mtlDiffuseColor,
 }
 
 func filterMtlFileLine(line string) (mtlLineType, []string) {

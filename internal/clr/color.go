@@ -51,6 +51,38 @@ func NewColor(params ...int) *Color {
 	return color
 }
 
+func NewColorF(params ...float32) *Color {
+	var (
+		r,g,b,a float32
+		paramsCount = len(params)
+	)
+
+
+
+	if paramsCount > 0 {
+		r = params[0]
+	}
+
+	if paramsCount > 1 {
+		g = params[1]
+	}
+
+	if paramsCount > 2 {
+		b = params[2]
+	}
+
+	if paramsCount > 3 {
+		a = params[3]
+	}
+
+	return &Color{
+		R: r,
+		G: g,
+		B: b,
+		Alpha: a,
+	}
+}
+
 func (c *Color) Enable() {
 	gl.Color4f(c.R, c.G, c.B, c.Alpha)
 }
