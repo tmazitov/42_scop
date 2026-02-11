@@ -1,13 +1,17 @@
 package rende
 
+import (
+	"github.com/tmazitov/42_scop/internal/geom"
+)
+
 type Object struct {
 	name 	string
-	shape 	[]*Vertex
+	shape 	[]*geom.Vertex
 	indices []uint32
 	vao 	uint32
 }
 
-func NewObject(name string, shape []*Vertex, indices []uint32) *Object {
+func NewObject(name string, shape []*geom.Vertex, indices []uint32) *Object {
 	return &Object{
 		name: name,
 		shape: shape,
@@ -20,7 +24,7 @@ func (o *Object) Name() string {
 	return o.name
 }
 
-func (o *Object) Shape() []*Vertex{
+func (o *Object) Shape() []*geom.Vertex{
 	return o.shape
 }
 

@@ -2,9 +2,10 @@ package rende
 
 import (
 	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/tmazitov/42_scop/internal/geom"
 	// "fmt"
 )
-func MakeVao(screen ScreenSize, indices []uint32, points []*Vertex) uint32 {
+func MakeVao(screen ScreenSize, indices []uint32, points []*geom.Vertex) uint32 {
 	var convertedVertex = make([]float32, 0, len(points)*3)
 	for _, point := range points {
 		convertedVertex = append(convertedVertex, point.Vector()...)

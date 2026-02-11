@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/tmazitov/42_scop/internal/clr"
 	"github.com/go-gl/gl/v2.1/gl"
 	// "fmt"
@@ -10,7 +10,7 @@ import (
 type Button struct {
 	id 		int
 	onClickHandler ElementHandleFunc
-	pos		*rende.Pos
+	pos		*geom.Pos
 	color	*clr.Color
 	width 	float32
 	height	float32
@@ -52,7 +52,7 @@ func (b *Button) SetColor(color *clr.Color) *Button {
 	return b
 }
 
-func (b *Button) SetPos(pos *rende.Pos) *Button{
+func (b *Button) SetPos(pos *geom.Pos) *Button{
 	b.pos = pos
 	return b
 } 

@@ -3,10 +3,10 @@ package parsing
 import (
 	"strings"
 	"strconv"
-	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
-func parseVertex(line string) (*rende.Vertex, error) {
+func parseVertex(line string) (*geom.Vertex, error) {
 	parts := strings.Split(line, " ")
 	if len(parts) != 4 {
 		return nil, ErrInvalidVertexLine
@@ -22,5 +22,5 @@ func parseVertex(line string) (*rende.Vertex, error) {
 		vector[index] = float32(value)
 	}
 
-	return rende.NewVertex(vector), nil
+	return geom.NewVertex(vector), nil
 }

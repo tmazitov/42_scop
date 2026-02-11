@@ -1,17 +1,12 @@
-package parsing
+package geom
 
-import (
-	"github.com/tmazitov/42_scop/internal/rende"
-	
-)
-
-func NormalizeVertices(vertices []*rende.Vertex) []*rende.Vertex {
+func NormalizeVertices(vertices []*Vertex) []*Vertex {
 	if len(vertices) == 0 {
 		return nil
 	}
 
 	// 1. AABB
-	min := rende.NewVertex([3]float32{
+	min := NewVertex([3]float32{
 		vertices[0].Pos.X, 
 		vertices[0].Pos.Y, 
 		vertices[0].Pos.Z,
@@ -30,7 +25,7 @@ func NormalizeVertices(vertices []*rende.Vertex) []*rende.Vertex {
 	}
 
 	// 2. Центр
-	center := rende.NewVertex([3]float32{
+	center := NewVertex([3]float32{
 		(min.Pos.X + max.Pos.X) * 0.5,
 		(min.Pos.Y + max.Pos.Y) * 0.5,
 		(min.Pos.Z + max.Pos.Z) * 0.5,
@@ -53,10 +48,10 @@ func NormalizeVertices(vertices []*rende.Vertex) []*rende.Vertex {
 
 	// 4. Применяем
 
-	result := make([]*rende.Vertex, 0, len(vertices))
+	result := make([]*Vertex, 0, len(vertices))
 
 	for i := range vertices {
-		result = append(result, rende.NewVertex([3]float32{
+		result = append(result, NewVertex([3]float32{
 			(vertices[i].Pos.X - center.Pos.X) * scale,
 			(vertices[i].Pos.Y - center.Pos.Y) * scale,
 			(vertices[i].Pos.Z - center.Pos.Z) * scale,

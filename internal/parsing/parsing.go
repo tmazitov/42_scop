@@ -2,6 +2,7 @@ package parsing
 
 import (
 	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/geom"
 	"bufio"
 	"fmt"
 	"os"
@@ -10,7 +11,7 @@ import (
 func ParseObj(filePath string) (*rende.Object, error) {
 
 	var (
-		vertexes []*rende.Vertex
+		vertexes []*geom.Vertex
 		indices []uint32
 	)
 
@@ -36,38 +37,26 @@ func ParseObj(filePath string) (*rende.Object, error) {
 		} else if lineType == "v" {
 			newVertex, err := parseVertex(line)
 			if err != nil {
-				return nil, fmt.Errorf("parsing line %d erorr : %w", counter, err)
+				return nil, fmt.Errorf("parsing line %d error : %w", counter, err)
 			}
 			vertexes = append(vertexes, newVertex)
 		} else if lineType == "f" {
 			newIndices, err := parseFace(line)
 			if err != nil {
-				return nil, fmt.Errorf("parsing line %d erorr : %w", counter, err)
+				return nil, fmt.Errorf("parsing line %d error : %w", counter, err)
 			}
 			indices = append(indices, newIndices...)
 		}
-
     }
 
-    // Check for errors during the scan
     if err := scanner.Err(); err != nil {
 		return nil, err
     }
 
-	fmt.Println("Before :")
-	for _, v := range vertexes {
-		fmt.Println(v.ToString())
-	}
-
-	normVerticises := NormalizeVertices(vertexes)
-	if normVerticises == nil {
+	normVertices := geom.NormalizeVertices(vertexes)
+	if normVertices == nil {
 		return nil, ErrNormFailed 
 	}
 
-	fmt.Println("After :")
-	for _, v := range vertexes {
-		fmt.Println(v.ToString())
-	}
-
-	return rende.NewObject(filePath, normVerticises, indices), nil
+	return rende.NewObject(filePath, normVertices, indices), nil
 }

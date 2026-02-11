@@ -5,6 +5,7 @@ import (
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/tmazitov/42_scop/internal/ui"
 	"github.com/tmazitov/42_scop/internal/clr"
 	"log"
@@ -69,7 +70,7 @@ func NewApp(config *Config) (*App, error) {
 
 	app.ui = ui.NewUI(app.ScreenSize)
 	app.ui.AddButton( ui.NewButton().
-		SetPos(&rende.Pos{X: 10, Y: 10, Z: 1}).
+		SetPos(&geom.Pos{X: 10, Y: 10, Z: 1}).
 		SetSize(40, 40).
 		SetColor(clr.NewColor(0, 0, 255)).
 		SetOnClick(func (xpos, ypos float32) error {
