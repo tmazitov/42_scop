@@ -74,6 +74,9 @@ func ParseObj(filePath string) (*rende.Object, error) {
 	if normVertices == nil {
 		return nil, ErrNormFailed 
 	}
+	for index, nv := range normVertices {
+		vertices[index].SetNorm(nv)
+	}
 
 	materials = make([]*rende.Material, 0, len(materialPaths))
 	for _, rawMtlPath := range materialPaths {
@@ -92,7 +95,7 @@ func ParseObj(filePath string) (*rende.Object, error) {
 	}
 
 	object.
-		SetShape(normVertices).
+		SetShape(vertices).
 		SetIndices(indices).
 		SetMaterials(materials)
 

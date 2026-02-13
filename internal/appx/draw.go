@@ -28,16 +28,15 @@ func (a *App) DrawScene(projection mgl32.Mat4) {
 	view := a.Camera().GetViewMatrix()
 	gl.MultMatrixf(&view[0])
 
+    lightPos := []float32{10.0, 10.0, 10.0, 1.0}
+    gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPos[0])
+
 	for _, obj := range a.Objects() {
 		gl.PushMatrix()
 		model := mgl32.Ident4()
 		gl.MultMatrixf(&model[0])
 
-		gl.BindVertexArray(obj.VAO(a.ScreenSize))
-		
-		// gl.Color3f(1.0, 1.0, 1.0)
-		
-		gl.DrawElements(gl.TRIANGLES, int32(obj.IndicesCount()), gl.UNSIGNED_INT, nil)
+		obj.Draw(a.ScreenSize)
 
 		gl.PopMatrix()
 	}

@@ -35,7 +35,7 @@ func NewButton() *Button {
 }
 
 func (b *Button) Draw() {
-	b.color.Enable()
+	b.color.Apply()
 
     gl.Begin(gl.QUADS)
 

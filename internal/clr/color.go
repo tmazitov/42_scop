@@ -83,6 +83,10 @@ func NewColorF(params ...float32) *Color {
 	}
 }
 
-func (c *Color) Enable() {
+func (c *Color) Apply() {
 	gl.Color4f(c.R, c.G, c.B, c.Alpha)
+}
+
+func (c *Color) Vector() []float32 {
+	return []float32{c.R, c.G, c.B, c.Alpha}
 }

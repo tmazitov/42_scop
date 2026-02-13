@@ -2,6 +2,7 @@ package rende
 
 import (
 	"github.com/tmazitov/42_scop/internal/geom"
+	"github.com/go-gl/gl/v2.1/gl"
 )
 
 type Object struct {
@@ -22,6 +23,23 @@ func NewObject(name string) *Object {
 	}
 }
 
+func (o *Object) Draw(screenSize ScreenSize) {
+	gl.BindVertexArray(o.VAO(screenSize))
+	
+	// Apply material before drawing
+	if materials := o.materials; len(materials) != 0 {
+		for _, material := range materials {
+			material.Apply()
+		}
+	} else {
+		// Default material if none specified
+		gl.Color3f(1.0, 1.0, 1.0)
+	}
+	
+	gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
+}
+
+
 func (o *Object) SetShape(shape []*geom.Vertex) *Object {
 	o.shape = shape
 	return o
@@ -33,6 +51,10 @@ func (o *Object) SetIndices(indices []uint32) *Object {
 func (o *Object) SetMaterials(materials []*Material) *Object {
 	o.materials = materials
 	return o
+}
+
+func (o *Object) Materials() []*Material {
+	return o.materials
 }
 
 func (o *Object) Name() string {
