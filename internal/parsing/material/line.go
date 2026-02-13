@@ -23,6 +23,10 @@ var mtlLineDictionary = map[string]mtlLineType {
 	"Ns"	 : mtlShininess,
 	"Ka"	 : mtlAmbientColor,
 	"Kd"	 : mtlDiffuseColor,
+	"Ks"	 : mtlSpecularColor,
+	"Ni"	 : mtlOpticalDensity,
+	"d"		 : mtlDissolve,
+	"illum"	 : mtlIlluminationModel,
 }
 
 func filterMtlFileLine(line string) (mtlLineType, []string) {

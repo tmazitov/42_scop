@@ -12,5 +12,9 @@ var (
 		mtlShininess: shininessHandler,
 		mtlAmbientColor: ambientColorHandler,
 		mtlDiffuseColor: diffuseColorHandler,
+		mtlOpticalDensity: opticalDensityHandler,
+		mtlSpecularColor: specularColorHandler,
+		mtlDissolve: dissolveHandler,
+		mtlIlluminationModel: illuminationModelHandler,
 	}
 )
