@@ -11,7 +11,7 @@ func MakeVao(screen ScreenSize, indices []uint32, points []*geom.Vertex) uint32 
     for _, point := range points {
         vertexData = append(vertexData, point.Pos.X, point.Pos.Y, point.Pos.Z)     // Position
         vertexData = append(vertexData, point.Norm.X, point.Norm.Y, point.Norm.Z)  // Normal
-        vertexData = append(vertexData, point.U, point.V)              // Texture coords
+        vertexData = append(vertexData, point.U, point.V)                          // Texture coords
     }
 
     var vao uint32

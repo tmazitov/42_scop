@@ -55,3 +55,29 @@ func (p *Vertex) SetTextureCoords(texture [2]float32) {
 	p.U = texture[0]
 	p.V = texture[1]
 }
+
+func (p *Vertex) Clone() *Vertex {
+
+	var result = &Vertex{}
+
+	if p.Pos != nil {
+		result.Pos = &Pos{
+			X : p.Pos.X,
+			Y : p.Pos.Y,
+			Z : p.Pos.Z,
+		}
+	}
+
+	if p.Norm != nil {
+		result.Norm = &Pos{
+			X : p.Norm.X,
+			Y : p.Norm.Y,
+			Z : p.Norm.Z,
+		}
+	}
+
+	result.U = p.U
+	result.V = p.V
+
+	return result
+}

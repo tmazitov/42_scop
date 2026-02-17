@@ -14,9 +14,7 @@ func ParseObj(filePath string) (*rende.Object, error) {
 
 	var (
 		object *rende.Object
-		objectParseProcess = &objectParsingProcess{
-			filePath: filePath,
-		}
+		objectParseProcess = newObjectParsingProcess(filePath)
 	)
 
 	file, err := os.Open(filePath)

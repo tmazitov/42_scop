@@ -1,32 +1,22 @@
 package objectParsing
 
 import (
+	"github.com/tmazitov/42_scop/internal/geom"
 	"strings"
 	"strconv"
 	"fmt"
-	"errors"
 )
 
 // Face: format is v/vt/vn
-func parseTexturesAndNormals(object *objectParsingProcess, vertexData []uint32) error {
+func parseTexturesAndNormals(object *objectParsingProcess, vertex *geom.Vertex, key vertexKey) {
 	
-	// Create vertex
-	vertexIndex := vertexData[0]
-	if int(vertexIndex) >= len(object.vertices) {
-		return errors.New("vertex index out of range")
-	}
-
-	vertex := object.vertices[vertexIndex]
-	
-	if len(vertexData) >= 2 && int(vertexData[1]) < len(object.verticesTextures){
-		vertex.SetTextureCoords(object.verticesTextures[vertexData[1]])
+	if textureId := key.Texture(); textureId >= 0 && textureId < len(object.verticesTextures){
+		vertex.SetTextureCoords(object.verticesTextures[textureId])
 	}
 	
-	if len(vertexData) == 3 && int(vertexData[2]) < len(object.verticesNormals){
-		vertex.SetNormByVector(object.verticesNormals[vertexData[2]])
+	if normId := key.Norm(); normId >= 0 && normId < len(object.verticesNormals){
+		vertex.SetNormByVector(object.verticesNormals[normId])
 	}
-	
-	return nil
 }
 
 
@@ -62,19 +52,29 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 				return fmt.Errorf("%w : invalid vertex index: 0 (OBJ uses 1-based indexing)", ErrInvalidFaceLine)
 			}
 
-			vertexData = append(vertexData, uint32(convertedElem))
+			vertexData = append(vertexData, uint32(convertedElem - 1))
 		}
 
-		vertexData[0]--
-
-		if len(vertexData) > 1 {
-			err := parseTexturesAndNormals(object, vertexData)
-			if err != nil {
-				return fmt.Errorf("%w : during textures and normals parsing error occurred : %w", ErrInvalidFaceLine, err)
-			}
+		if int(vertexData[0]) >= len(object.verticesCoords) {
+			return ErrInvalidFaceLine
 		}
-		
-		vector = append(vector, uint32(vertexData[0]))
+		key := newVertexKey(vertexData)
+
+        // Check if this exact combination already exists
+		if existingIdx, ok := object.verticesCache[key]; ok {
+			vector = append(vector, existingIdx)
+		} else {
+			vertexCoords := object.verticesCoords[key.Pos()]
+			newVertex := geom.NewVertex(vertexCoords) 
+			parseTexturesAndNormals(object, newVertex, key)
+			
+			
+			newIdx := uint32(len(object.vertices))
+			object.vertices = append(object.vertices, newVertex)
+			object.verticesCache[key] = newIdx
+			
+			vector = append(vector, newIdx)
+		}
 	}
 
 	// Triangulate polygon using fan triangulation
