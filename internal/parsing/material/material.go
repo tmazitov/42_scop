@@ -10,7 +10,7 @@ import (
 func ParseMtl(filePath string) (*rende.Material, error) {
 
 	var (
-		material *rende.Material = rende.NewMaterial()
+		material *rende.Material = rende.NewMaterial(filePath)
 	)
 
 	file, err := os.Open(filePath)
@@ -57,3 +57,4 @@ func ParseMtl(filePath string) (*rende.Material, error) {
 
 	return material, nil
 }
+

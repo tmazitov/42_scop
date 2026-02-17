@@ -16,5 +16,6 @@ var (
 		mtlSpecularColor: specularColorHandler,
 		mtlDissolve: dissolveHandler,
 		mtlIlluminationModel: illuminationModelHandler,
+		mtlDiffuseTextureMap: diffuseTextureMapHandler,
 	}
 )

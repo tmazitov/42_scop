@@ -6,7 +6,7 @@ import (
 
 	// OR: github.com/go-gl/gl/v2.1/gl
 	"github.com/tmazitov/42_scop/internal/appx"
-	"github.com/tmazitov/42_scop/internal/parsing"
+	objectParsing "github.com/tmazitov/42_scop/internal/parsing/object"
 )
 
 // makeVao initializes and returns a vertex array from the points provided.
@@ -24,7 +24,7 @@ func main() {
 	}
 	defer app.Close()
 
-	obj, err := parsing.ParseObj(config.ObjectPath)
+	obj, err := objectParsing.ParseObj(config.ObjectPath)
 	if err != nil {
 		log.Fatal(err)
 	}

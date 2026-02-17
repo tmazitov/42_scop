@@ -6,11 +6,12 @@ import (
 	// "fmt"
 )
 func MakeVao(screen ScreenSize, indices []uint32, points []*geom.Vertex) uint32 {
-    // Interleave position and normal data
+    // Interleave position, normal, and texture coordinates
     var vertexData []float32
     for _, point := range points {
         vertexData = append(vertexData, point.Pos.X, point.Pos.Y, point.Pos.Z)     // Position
         vertexData = append(vertexData, point.Norm.X, point.Norm.Y, point.Norm.Z)  // Normal
+        vertexData = append(vertexData, point.U, point.V)              // Texture coords
     }
 
     var vao uint32
@@ -27,19 +28,24 @@ func MakeVao(screen ScreenSize, indices []uint32, points []*geom.Vertex) uint32 
     gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
     gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
 
-    stride := int32(6 * 4) // 6 floats per vertex (3 pos + 3 normal)
+    stride := int32(8 * 4) // 8 floats per vertex (3 pos + 3 normal + 2 uv)
 
-    // Enable and set vertex position
+    // Position
     gl.EnableClientState(gl.VERTEX_ARRAY)
     gl.VertexPointer(3, gl.FLOAT, stride, gl.PtrOffset(0))
 
-    // Enable and set vertex normal
+    // Normal
     gl.EnableClientState(gl.NORMAL_ARRAY)
     gl.NormalPointer(gl.FLOAT, stride, gl.PtrOffset(3*4))
+
+    // Texture coordinates
+    gl.EnableClientState(gl.TEXTURE_COORD_ARRAY)
+    gl.TexCoordPointer(2, gl.FLOAT, stride, gl.PtrOffset(6*4))
 
     gl.BindVertexArray(0)
     gl.DisableClientState(gl.VERTEX_ARRAY)
     gl.DisableClientState(gl.NORMAL_ARRAY)
+    gl.DisableClientState(gl.TEXTURE_COORD_ARRAY)
 
     return vao
 }

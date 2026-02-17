@@ -15,6 +15,7 @@ const (
     mtlOpticalDensity
     mtlDissolve
     mtlIlluminationModel
+	mtlDiffuseTextureMap
     mtlNone
 )
 
@@ -27,6 +28,7 @@ var mtlLineDictionary = map[string]mtlLineType {
 	"Ni"	 : mtlOpticalDensity,
 	"d"		 : mtlDissolve,
 	"illum"	 : mtlIlluminationModel,
+	"map_Kd" : mtlDiffuseTextureMap,
 }
 
 func filterMtlFileLine(line string) (mtlLineType, []string) {
@@ -34,7 +36,7 @@ func filterMtlFileLine(line string) (mtlLineType, []string) {
 		return mtlNone, nil
 	}
 
-	args := strings.Split(line, " ")
+	args := strings.Fields(line)
 	if len(args) == 0 {
 		return mtlNone, nil
 	}

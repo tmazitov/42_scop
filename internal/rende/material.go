@@ -6,18 +6,21 @@ import (
 )
 
 type Material struct {
-	name		string
-	shininess	float32
-	density		float32
-	dissolve	float32
-	ambientColor *clr.Color
-	diffuseColor *clr.Color
-	specularColor *clr.Color
-	illuminationModel int
+	SourcePath 			string
+	name				string
+	shininess			float32
+	density				float32
+	dissolve			float32
+	ambientColor		*clr.Color
+	diffuseColor		*clr.Color
+	specularColor 		*clr.Color
+	illuminationModel	int
+	textureId			uint32
 }
 
-func NewMaterial() *Material {
+func NewMaterial(sourcePath string) *Material {
 	return &Material{
+		SourcePath: sourcePath,
 		name: "",
 		dissolve: 0.0,
 		density: 0.0,
@@ -26,10 +29,29 @@ func NewMaterial() *Material {
 		diffuseColor: nil,
 		specularColor: nil,
 		illuminationModel: 0,
+		textureId: 0, 
 	}
 }
 
 func (m *Material) Apply() {
+
+    if m.textureId != 0 {
+        gl.Enable(gl.TEXTURE_2D)
+        gl.BindTexture(gl.TEXTURE_2D, m.textureId)
+        
+        // Texture combines with material color
+        gl.TexEnvi(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.MODULATE)
+    } else {
+        gl.Disable(gl.TEXTURE_2D)
+    }
+    
+    // Apply colors as before
+    if m.diffuseColor != nil {
+        diffuse := m.diffuseColor.Vector()
+        gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, &diffuse[0])
+        gl.Color4fv(&diffuse[0])
+    }
+
     // Ambient Color (Ka)
     if m.ambientColor != nil {
         ambient := m.ambientColor.Vector()
@@ -105,4 +127,15 @@ func (m *Material) SetDensity(density float32) {
 
 func (m *Material) SetIlluminationModel(model int) {
 	m.illuminationModel = model
+}
+
+func (m *Material) SetTextureId(textureId uint32) {
+	m.textureId = textureId
+}
+
+func (m *Material) Cleanup() {
+    if m.textureId != 0 {
+        gl.DeleteTextures(1, &m.textureId)
+        m.textureId = 0
+    }
 }

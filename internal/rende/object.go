@@ -83,3 +83,9 @@ func (o *Object) NodeCount() int32 {
 func (o *Object) IndicesCount() int32 {
 	return int32(len(o.indices))
 }
+
+func (o *Object) Cleanup() {
+	for _, material := range o.materials {
+		material.Cleanup()
+	}
+}
