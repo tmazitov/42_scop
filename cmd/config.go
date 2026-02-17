@@ -11,7 +11,6 @@ import (
 
 type Config struct {
 	ObjectPath 		string
-	MaterialPath 	string
 	Window *appx.WindowOptions
 }
 
@@ -57,7 +56,6 @@ func SetupConfig() (*Config, error) {
 
 	return &Config{
 		ObjectPath: objFile,
-		MaterialPath: loadVar("MTL_FILE_PATH", ""),
 		Window:  &appx.WindowOptions{
 			Title: loadVar("WINDOW_TITLE", "SCOP | " + objName),
 			Height: size[0],

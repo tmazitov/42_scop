@@ -71,7 +71,7 @@ func NewApp(config *Config) (*App, error) {
 	app.controller = newController(app)
 	app.controller.BindMouseControl()
 
-	app.ui = ui.NewUI(app.ScreenSize)
+	app.ui = ui.NewUI()
 	app.ui.AddButton( ui.NewButton().
 		SetPos(&geom.Pos{X: 10, Y: 10, Z: 1}).
 		SetSize(40, 40).
@@ -103,6 +103,18 @@ func (a *App) Camera() *Camera {
 
 func (a *App) AddObjects(objs ...*rende.Object) {
 	a.objects = append(a.objects, objs...)
+	
+	var y float32 = 32
+	var x float32 = a.ScreenSize.Width - float32(200)
+	for _, objectInfoElem := range a.objects[0].Info() {
+		text, err := ui.NewText(objectInfoElem, x, y)
+		if err != nil {
+			log.Println("err : ", err)
+			continue
+		}
+		a.ui.AddStaticText(text)
+		y += 28
+	}
 }
 
 func (a *App) Objects() []*rende.Object {

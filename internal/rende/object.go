@@ -3,6 +3,7 @@ package rende
 import (
 	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/go-gl/gl/v2.1/gl"
+	"fmt"
 )
 
 type Object struct {
@@ -23,7 +24,16 @@ func NewObject(name string) *Object {
 	}
 }
 
+func (o *Object) Info() []string{
+	return []string{
+		fmt.Sprintf("Name: %s", o.name),
+		fmt.Sprintf("Vertices: %d", len(o.shape)),
+		fmt.Sprintf("Faces: %d", len(o.indices) / 3),
+	}
+}	
+  
 func (o *Object) Draw(screenSize ScreenSize) {
+
 	gl.BindVertexArray(o.VAO(screenSize))
 	
 	// Apply material before drawing

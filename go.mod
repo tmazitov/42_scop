@@ -10,4 +10,5 @@ require (
 require (
 	github.com/go-gl/mathgl v1.2.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	golang.org/x/image v0.36.0 // indirect
 )

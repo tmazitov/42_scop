@@ -89,7 +89,6 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 		)
 	}
 
-	fmt.Printf("vector : '%+v' triangulated to '%+v'\n", vector, triangulated)
 
 	object.indices = append(object.indices, triangulated...)
 

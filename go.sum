@@ -6,3 +6,5 @@ github.com/go-gl/mathgl v1.2.0 h1:v2eOj/y1B2afDxF6URV1qCYmo1KW08lAMtTbOn3KXCY=
 github.com/go-gl/mathgl v1.2.0/go.mod h1:pf9+b5J3LFP7iZ4XXaVzZrCle0Q/vNpB/vDe5+3ulRE=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+golang.org/x/image v0.36.0 h1:Iknbfm1afbgtwPTmHnS2gTM/6PPZfH+z2EFuOkSbqwc=
+golang.org/x/image v0.36.0/go.mod h1:YsWD2TyyGKiIX1kZlu9QfKIsQ4nAAK9bdgdrIsE7xy4=
