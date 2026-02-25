@@ -4,11 +4,14 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/tmazitov/42_scop/internal/rende"
 )
 
-func (a *App) Draw(projection mgl32.Mat4) {
+func (a *App) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     
+	projection := rende.MakeProjection(a.screenSize, 1093.55, a.Camera().Zoom)
+
     a.DrawScene(projection)
     
     a.DrawUI()

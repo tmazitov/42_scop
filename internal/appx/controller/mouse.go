@@ -39,3 +39,7 @@ func (c *Controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float6
 		c.app.Camera().ProcessMouseMovement(xoffset, yoffset)
 	}
 }
+
+func (c *Controller) scrollCallback(w *glfw.Window, xoffset float64, yoffset float64) {
+	c.app.Camera().ZoomHandler(yoffset)
+}

@@ -1,18 +1,15 @@
 package camera
 
-func (c *Camera) ZoomIn() {
+func (c *Camera) ZoomHandler(yoffset float64) {
 
-	if c.Zoom == 0.1 {
-		return
-	}
-
-	c.Zoom -= 1.0 
-}
-
-func (c *Camera) ZoomOut() {
-	if c.Zoom == 45.0 {
-		return
-	}
-
-	c.Zoom += 1.0
+    // Adjust FOV for zoom effect
+    c.Zoom -= float32(yoffset) * 2.0
+    
+    // Clamp FOV
+    if c.Zoom < 10.0 {
+        c.Zoom = 10.0
+    }
+    if c.Zoom > 120.0 {
+        c.Zoom = 120.0
+    }
 }
