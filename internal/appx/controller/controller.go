@@ -1,13 +1,13 @@
-package appx
+package controller
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	// "fmt"
-	"log"
+	"github.com/tmazitov/42_scop/internal/appx/camera"
 )
 
-type controller struct {
-	app         *App
+type Controller struct {
+	app			App		
 	lastX       float64
 	lastY       float64
 	firstMouse  bool
@@ -15,11 +15,11 @@ type controller struct {
 	lastFrame   float32
 }
 
-func newController(app *App) *controller {
-	return &controller{
-		app:        app,
-		lastX:      float64(app.ScreenSize.Width) / 2,
-		lastY:      float64(app.ScreenSize.Height) / 2,
+func NewController(app App) *Controller {
+	return &Controller{
+		app:     	app,
+		lastX:      float64(app.ScreenSize().Width) / 2,
+		lastY:      float64(app.ScreenSize().Height) / 2,
 		firstMouse: true,
 		deltaTime:  0.0,
 		lastFrame:  0.0,
@@ -27,7 +27,7 @@ func newController(app *App) *controller {
 }
 
 // Process keyboard input for camera movement
-func (c *controller) processInput(window *glfw.Window, camera *Camera) {
+func (c *Controller) ProcessInput(window *glfw.Window, camera *camera.Camera) {
 	// Update delta time
 	currentFrame := float32(glfw.GetTime())
 	c.deltaTime = currentFrame - c.lastFrame
@@ -60,44 +60,11 @@ func (c *controller) processInput(window *glfw.Window, camera *Camera) {
 }
 
 
-func (c *controller) mouseClickCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
-
-	if button == glfw.MouseButtonLeft && action == glfw.Release {
-		xpos, ypos := window.GetCursorPos()
-	
-		action := c.app.ui.IsPressed(float32(xpos), float32(ypos))
-		if action == nil {
-			return ;
-		}
-		err := action(float32(xpos), float32(ypos))
-		if err != nil {
-			log.Println("ui pressed error : ", err)
-		}
-	}
-}
-
-func (c *controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float64) {
-	if c.firstMouse {
-		c.lastX = xpos
-		c.lastY = ypos
-		c.firstMouse = false
-	}
-
-	xoffset := float32(xpos - c.lastX)
-	yoffset := float32(c.lastY - ypos) // reversed: y ranges bottom to top
-
-	c.lastX = xpos
-	c.lastY = ypos
-
-	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		c.app.camera.ProcessMouseMovement(xoffset, yoffset)
-	}
-}
 
 
 // Bind mouse control to window
-func (c *controller) BindMouseControl() {
-	window := c.app.window.Core()
+func (c *Controller) BindMouseControl() {
+	window := c.app.Window().Core()
 	
 	// Capture and hide cursor
 	// window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)

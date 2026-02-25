@@ -7,11 +7,13 @@ import (
 	"path/filepath"
 	"github.com/joho/godotenv"
 	"github.com/tmazitov/42_scop/internal/appx"
+	"github.com/tmazitov/42_scop/internal/appx/window"
+
 )
 
 type Config struct {
 	ObjectPath 		string
-	Window *appx.WindowOptions
+	Window *window.WindowOptions
 }
 
 func loadVar(name string, defaultValue string) string {
@@ -56,7 +58,7 @@ func SetupConfig() (*Config, error) {
 
 	return &Config{
 		ObjectPath: objFile,
-		Window:  &appx.WindowOptions{
+		Window:  &window.WindowOptions{
 			Title: loadVar("WINDOW_TITLE", "SCOP | " + objName),
 			Height: size[0],
 			Width: size[1],

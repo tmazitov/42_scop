@@ -1,9 +1,9 @@
 package appx
 
 import (
-	// "github.com/tmazitov/42_scop/internal/appx"
+	"github.com/tmazitov/42_scop/internal/appx/window"
 )
 
 type Config struct {
-	Window *WindowOptions
+	Window *window.WindowOptions
 }

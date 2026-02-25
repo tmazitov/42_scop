@@ -5,21 +5,22 @@ import (
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/rende"
-	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/tmazitov/42_scop/internal/ui"
-	"github.com/tmazitov/42_scop/internal/clr"
+	"github.com/tmazitov/42_scop/internal/appx/camera"
+	"github.com/tmazitov/42_scop/internal/appx/window"
+	"github.com/tmazitov/42_scop/internal/appx/controller"
 	"log"
 )
 
 type App struct {
-	controller *controller
 	config     *Config
-	window     *Window
-	camera     *Camera
+	controller *controller.Controller
+	window     *window.Window
+	camera     *camera.Camera
 	state	   *State
 	ui		   *ui.UI
 	objects    []*rende.Object
-	ScreenSize rende.ScreenSize
+	screenSize rende.ScreenSize
 }
 
 
@@ -44,7 +45,7 @@ func initOpenGL() error {
 }
 
 func NewApp(config *Config) (*App, error) {
-	window, err := NewWindow(config.Window)
+	win, err := window.NewWindow(config.Window)
 	if err != nil {
 		return nil, err
 	}
@@ -53,75 +54,54 @@ func NewApp(config *Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-// CORRECT camera setup for THIS file:
-centerX := 148.56
-centerY := 0.0
-centerZ := 49.95  // Center of Z range: (-0.02 + 99.91) / 2
-
-maxDimension := 1093.55
-
-cameraDistance := maxDimension * 1.5  // ~1640
-
 	app := &App{
 		config:  config,
-		window:  window,
+		window:  win,
 		state:	 NewState(),
-		camera:  NewCamera(
+		camera:  camera.NewCamera(
 			mgl32.Vec3{
-				float32(centerX),
-				float32(centerY), 
-				float32(centerZ + cameraDistance),  // ~1690
-			},
-			mgl32.Vec3{0, 1, 0},
-			-90, 0,
-		),
+				0, 0, 0,
+			}).
+			SetMouseSensitivity(0.1).
+			SetVisionAngle(0, -90),
 		objects: nil,
 		controller: nil,
-		ui:			nil,
-		ScreenSize: rende.ScreenSize{
+		ui:			ui.NewUI(),
+		screenSize: rende.ScreenSize{
 			Height: float32(config.Window.Height),
 			Width:  float32(config.Window.Width),
 		},
 	}
 
-	app.controller = newController(app)
+	app.controller = controller.NewController(app)
 	app.controller.BindMouseControl()
-
-	app.ui = ui.NewUI()
-	app.ui.AddButton( ui.NewButton().
-		SetPos(&geom.Pos{X: 10, Y: 10, Z: 1}).
-		SetSize(40, 40).
-		SetColor(clr.NewColor(0, 0, 255)).
-		SetOnClick(func (xpos, ypos float32) error {
-			
-			app.state.IsVertexOnly = !app.state.IsVertexOnly
-
-			if app.state.IsVertexOnly {
-				gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
-			} else {
-				gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
-			}
-
-			return nil
-		}))
+	app.SetupButtons()
 
 	return app, nil
 }
 
 // Rest of your methods remain the same...
 func (a *App) Process() {
-	a.controller.processInput(a.window.Core(), a.camera)
+	a.controller.ProcessInput(a.window.Core(), a.camera)
 }
 
-func (a *App) Camera() *Camera {
+func (a *App) Camera() *camera.Camera {
 	return a.camera
+}
+
+func (a *App) UI() *ui.UI {
+	return a.ui
+}
+
+func (a *App) ScreenSize() rende.ScreenSize {
+	return a.screenSize
 }
 
 func (a *App) AddObjects(objs ...*rende.Object) {
 	a.objects = append(a.objects, objs...)
 	
 	var y float32 = 32
-	var x float32 = a.ScreenSize.Width - float32(200)
+	var x float32 = a.screenSize.Width - float32(200)
 	for _, objectInfoElem := range a.objects[0].Info() {
 		text, err := ui.NewText(objectInfoElem, x, y)
 		if err != nil {
@@ -131,13 +111,25 @@ func (a *App) AddObjects(objs ...*rende.Object) {
 		a.ui.AddStaticText(text)
 		y += 28
 	}
+
+	pos := calculateCameraPosition(a.objects[0].Shape())
+
+	speed := calculateCameraSpeed(a.objects[0].Shape())
+
+	a.camera.
+	SetMovementSpeed(speed).
+	SetPosition(mgl32.Vec3{
+		pos.X,
+		pos.Y,
+		pos.Z,
+	})
 }
 
 func (a *App) Objects() []*rende.Object {
 	return a.objects
 }
 
-func (a *App) Window() *Window {
+func (a *App) Window() *window.Window {
 	return a.window
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 func render(app *appx.App, config *Config) {
-	projection := rende.MakeProjection(app.ScreenSize, 1093.55)
+	projection := rende.MakeProjection(app.ScreenSize(), 1093.55)
 
 	for !app.Window().Core().ShouldClose() {
 		app.Process()

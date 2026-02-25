@@ -1,87 +1,45 @@
 package appx
 
 import (
-    "github.com/go-gl/mathgl/mgl32"
-	"math"
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
-type Camera struct {
-	Position mgl32.Vec3
-	Front    mgl32.Vec3
-	Up       mgl32.Vec3
-	Right    mgl32.Vec3
-	WorldUp  mgl32.Vec3
+func calculateCameraPosition(vertices []*geom.Vertex) (geom.Pos) {
+	minX, maxX := vertices[0].Pos.X, vertices[0].Pos.X
+    minY, maxY := vertices[0].Pos.Y, vertices[0].Pos.Y
+    minZ, maxZ := vertices[0].Pos.Z, vertices[0].Pos.Z
 
-	Yaw   float32
-	Pitch float32
+    for _, v := range vertices {
+        if v.Pos.X < minX { minX = v.Pos.X }
+        if v.Pos.X > maxX { maxX = v.Pos.X }
+        if v.Pos.Y < minY { minY = v.Pos.Y }
+        if v.Pos.Y > maxY { maxY = v.Pos.Y }
+        if v.Pos.Z < minZ { minZ = v.Pos.Z }
+        if v.Pos.Z > maxZ { maxZ = v.Pos.Z }
+    }
 
-	MovementSpeed    float32
-	MouseSensitivity float32
-}
-
-func NewCamera(position, up mgl32.Vec3, yaw, pitch float32) *Camera {
-	cam := &Camera{
-		Position:         position,
-		WorldUp:          up,
-		Yaw:              yaw,
-		Pitch:            pitch,
-		Front:            mgl32.Vec3{0, 0, -1},
-		MovementSpeed:    200.5,
-		MouseSensitivity: 0.1,
-	}
-	cam.updateCameraVectors()
-	return cam
-}
-
-func (c *Camera) GetViewMatrix() mgl32.Mat4 {
-	return mgl32.LookAtV(c.Position, c.Position.Add(c.Front), c.Up)
-}
-
-func (c *Camera) ProcessKeyboard(direction string, deltaTime float32) {
-	velocity := c.MovementSpeed * deltaTime
-
-	switch direction {
-	case "FORWARD":
-		c.Position = c.Position.Add(c.Front.Mul(velocity))
-	case "BACKWARD":
-		c.Position = c.Position.Sub(c.Front.Mul(velocity))
-	case "LEFT":
-		c.Position = c.Position.Sub(c.Right.Mul(velocity))
-	case "RIGHT":
-		c.Position = c.Position.Add(c.Right.Mul(velocity))
-	case "UP":
-		c.Position = c.Position.Add(c.WorldUp.Mul(velocity))
-	case "DOWN":
-		c.Position = c.Position.Sub(c.WorldUp.Mul(velocity))
+	maxDifference := (maxX - minX + maxY - minY + maxZ - minZ) / 3
+	
+	return geom.Pos{
+		X: (minX + maxX) / 2,
+		Y: (minY + maxY) / 2,
+		Z: (minZ + maxZ) / 2 + maxDifference,
 	}
 }
 
-func (c *Camera) ProcessMouseMovement(xoffset, yoffset float32) {
-	xoffset *= c.MouseSensitivity
-	yoffset *= c.MouseSensitivity
+func calculateCameraSpeed(vertices []*geom.Vertex) float32 {
+	minX, maxX := vertices[0].Pos.X, vertices[0].Pos.X
+	minY, maxY := vertices[0].Pos.Y, vertices[0].Pos.Y
+	minZ, maxZ := vertices[0].Pos.Z, vertices[0].Pos.Z
 
-	c.Yaw += xoffset
-	c.Pitch += yoffset
+    for _, v := range vertices {
+        if v.Pos.X < minX { minX = v.Pos.X }
+        if v.Pos.X > maxX { maxX = v.Pos.X }
+        if v.Pos.Y < minY { minY = v.Pos.Y }
+        if v.Pos.Y > maxY { maxY = v.Pos.Y }
+        if v.Pos.Z < minZ { minZ = v.Pos.Z }
+        if v.Pos.Z > maxZ { maxZ = v.Pos.Z }
+    }
 
-	// Constrain pitch to avoid gimbal lock
-	if c.Pitch > 89.0 {
-		c.Pitch = 89.0
-	}
-	if c.Pitch < -89.0 {
-		c.Pitch = -89.0
-	}
-
-	c.updateCameraVectors()
-}
-
-func (c *Camera) updateCameraVectors() {
-	// Calculate the new Front vector
-	front := mgl32.Vec3{
-		float32(math.Cos(float64(mgl32.DegToRad(c.Yaw))) * math.Cos(float64(mgl32.DegToRad(c.Pitch)))),
-		float32(math.Sin(float64(mgl32.DegToRad(c.Pitch)))),
-		float32(math.Sin(float64(mgl32.DegToRad(c.Yaw))) * math.Cos(float64(mgl32.DegToRad(c.Pitch)))),
-	}
-	c.Front = front.Normalize()
-	c.Right = c.Front.Cross(c.WorldUp).Normalize()
-	c.Up = c.Right.Cross(c.Front).Normalize()
+	return (maxX - minX + maxY - minY + maxZ - minZ) / 3 * 0.5
 }
