@@ -6,7 +6,6 @@ import (
 )
 
 type Material struct {
-	SourcePath 			string
 	name				string
 	shininess			float32
 	density				float32
@@ -16,11 +15,12 @@ type Material struct {
 	specularColor 		*clr.Color
 	illuminationModel	int
 	textureId			uint32
+    startIndex          int
+    count               int
 }
 
-func NewMaterial(sourcePath string) *Material {
+func NewMaterial() *Material {
 	return &Material{
-		SourcePath: sourcePath,
 		name: "",
 		dissolve: 0.0,
 		density: 0.0,
@@ -29,8 +29,26 @@ func NewMaterial(sourcePath string) *Material {
 		diffuseColor: nil,
 		specularColor: nil,
 		illuminationModel: 0,
-		textureId: 0, 
+		textureId: 0,
+        startIndex: 0,
+        count: 0,
 	}
+}
+
+func (m *Material) Name() string {
+    return m.name
+}
+
+func (m *Material) StartRange(startIndex int) {
+    m.startIndex = startIndex
+} 
+
+func (m *Material) IncreaseRange(value int) {
+    m.count += value
+}
+
+func (m *Material) Range() (int, int) {
+    return m.startIndex, m.count
 }
 
 func (m *Material) Apply() {

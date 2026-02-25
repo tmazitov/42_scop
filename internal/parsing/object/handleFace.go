@@ -92,5 +92,9 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 
 	object.indices = append(object.indices, triangulated...)
 
+	if object.currentMaterial != nil {
+		object.currentMaterial.IncreaseRange(len(triangulated))
+	}
+
 	return nil
 }

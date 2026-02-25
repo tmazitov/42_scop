@@ -10,5 +10,6 @@ var (
 	ErrInvalidVertexNormalLine = 	errors.New("obj parsing error : 'vn' row is invalid")
 	ErrInvalidFaceLine = 			errors.New("obj parsing error : 'f' row is invalid")
 	ErrInvalidMaterialLine =		errors.New("obj parsing error : 'mtllib' row is invalid")
+	ErrInvalidUseMaterialLine =		errors.New("obj parsing error : 'usemtl' row is invalid")
 	ErrNormFailed =					errors.New("obj parsing error : vertices normalization failed")
 )

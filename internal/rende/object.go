@@ -4,6 +4,7 @@ import (
 	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/go-gl/gl/v2.1/gl"
 	"fmt"
+	"unsafe"
 )
 
 type Object struct {
@@ -38,15 +39,18 @@ func (o *Object) Draw(screenSize ScreenSize) {
 	
 	// Apply material before drawing
 	if materials := o.materials; len(materials) != 0 {
-		for _, material := range materials {
+		for _, material := range o.materials {
 			material.Apply()
+
+			materialRangeStart, materialRangeLength := material.Range()
+			offset := uintptr(materialRangeStart * 4)  // 4 bytes per uint32
+            gl.DrawElements(gl.TRIANGLES, int32(materialRangeLength), gl.UNSIGNED_INT, unsafe.Pointer(offset))
 		}
 	} else {
-		// Default material if none specified
 		gl.Color3f(1.0, 1.0, 1.0)
+		gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
 	}
 	
-	gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
 }
 
 

@@ -16,11 +16,11 @@ func materialHandler(object *objectParsingProcess, args []string) error {
 		mtlPath = filepath.Join(filepath.Dir(object.filePath), mtlPath)
 	}
 	
-	material, err := materialParsing.ParseMtl(mtlPath)
+	materials, err := materialParsing.ParseMtl(mtlPath)
 	if err != nil {
 		return err
 	}
-	object.materials = append(object.materials, material)
+	object.materials = append(object.materials, materials...)
 
 	return nil
 }

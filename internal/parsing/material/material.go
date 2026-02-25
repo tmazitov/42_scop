@@ -7,10 +7,10 @@ import (
 	"os"
 )
 
-func ParseMtl(filePath string) (*rende.Material, error) {
+func ParseMtl(filePath string) ([]*rende.Material, error) {
 
 	var (
-		material *rende.Material = rende.NewMaterial(filePath)
+		proc *mtlParsingProcess = newMtlParsingProcess(filePath)
 	)
 
 	file, err := os.Open(filePath)
@@ -46,7 +46,7 @@ func ParseMtl(filePath string) (*rende.Material, error) {
 			continue
 		}
 
-		if err := lineHandler(material, lineArgs); err != nil {
+		if err := lineHandler(proc, lineArgs); err != nil {
 			return nil, err
 		}
     }
@@ -55,6 +55,6 @@ func ParseMtl(filePath string) (*rende.Material, error) {
 		return nil, err
     }
 
-	return material, nil
+	return proc.materials, nil
 }
 

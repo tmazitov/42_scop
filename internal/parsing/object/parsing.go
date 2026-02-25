@@ -10,5 +10,6 @@ var (
 		objVertexNormal		: vertexNormalHandler,
 		objFace   			: faceHandler,
 		objNewMaterial 		: materialHandler,
+		objUseMaterial		: materialUseHandler,
 	}
 )

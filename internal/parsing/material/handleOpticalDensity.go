@@ -7,12 +7,17 @@ import (
 )
 
 // dissolveHandler parsing dissolve value that has a float type and belongs to the range from 0 to 1.
-func opticalDensityHandler(material *rende.Material, args []string) error {
+func opticalDensityHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) != 2 {
 		return ErrInvalidOpticalDensityLine
 	}
 
+	var material *rende.Material
+	if material = proc.currentMaterial(); material == nil {
+		return ErrInvalidFile
+	}
+	
 	rawValue, err := strconv.ParseFloat(args[1], 32)
 	
 	if err != nil {

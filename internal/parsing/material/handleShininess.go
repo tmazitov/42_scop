@@ -8,13 +8,18 @@ import (
 
 // shininessHandler handles parsing of shininess.
 // Parsing value has a float type and belongs to the range from 0 to 1000. 
-func shininessHandler(material *rende.Material, args []string) error {
+func shininessHandler(proc *mtlParsingProcess, args []string) error {
 
 	
 	if len(args) != 2 {
 		return ErrInvalidMaterialLine
 	}
 
+	var material *rende.Material
+	if material = proc.currentMaterial(); material == nil {
+		return ErrInvalidFile
+	}
+	
 	rawValue, err := strconv.ParseFloat(args[1], 32)
 	
 	if err != nil {

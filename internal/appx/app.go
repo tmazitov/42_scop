@@ -53,12 +53,28 @@ func NewApp(config *Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+// CORRECT camera setup for THIS file:
+centerX := 148.56
+centerY := 0.0
+centerZ := 49.95  // Center of Z range: (-0.02 + 99.91) / 2
+
+maxDimension := 1093.55
+
+cameraDistance := maxDimension * 1.5  // ~1640
 
 	app := &App{
 		config:  config,
 		window:  window,
 		state:	 NewState(),
-		camera:  NewCamera(mgl32.Vec3{0, 0, 3}, mgl32.Vec3{0, 1, 0}, -90, 0),
+		camera:  NewCamera(
+			mgl32.Vec3{
+				float32(centerX),
+				float32(centerY), 
+				float32(centerZ + cameraDistance),  // ~1690
+			},
+			mgl32.Vec3{0, 1, 0},
+			-90, 0,
+		),
 		objects: nil,
 		controller: nil,
 		ui:			nil,

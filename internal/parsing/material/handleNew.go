@@ -5,17 +5,21 @@ import (
 )
 
 // newMaterialHandler handles parsing of a material definition.
-func newMaterialHandler(material *rende.Material, args []string) error {
+func newMaterialHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) != 2 {
 		return ErrInvalidMaterialLine
 	}
 
-	if material == nil {
-		return ErrNilMaterial
+	name := args[1]
+	if len(name) == 0 {
+		return ErrInvalidMaterialLine
 	}
 
-	material.SetName(args[1])
+	newMaterial := rende.NewMaterial()
+	newMaterial.SetName(name)
+
+	proc.materials = append(proc.materials, newMaterial)
 
 	return nil
 }

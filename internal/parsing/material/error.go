@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	ErrInvalidFile = errors.New("mtl parsing error : invalid lines order")
 	ErrInvalidMaterialLine = errors.New("mtl parsing error : 'newmtl' row is invalid")
 	ErrInvalidShininessLine = errors.New("mtl parsing error : 'Ns' row is invalid") 
 	ErrInvalidAmbientColorLine = errors.New("mtl parsing error : 'Ka' row is invalid")

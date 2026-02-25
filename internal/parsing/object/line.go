@@ -12,6 +12,7 @@ const (
 	objVertexNormal
 	objFace
 	objNewMaterial
+	objUseMaterial
 	objNone
 )
 
@@ -21,6 +22,7 @@ var objLineDictionary = map[string]objLineType {
 	"vn"	: objVertexNormal,
 	"f"		: objFace,
 	"mtllib": objNewMaterial,
+	"usemtl": objUseMaterial,
 }
 	
 func filterObjFileLine(line string) (objLineType, []string) {

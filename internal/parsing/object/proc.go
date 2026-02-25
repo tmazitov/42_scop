@@ -14,7 +14,7 @@ type objectParsingProcess struct {
 	verticesCache      	map[vertexKey]uint32
 	indices				[]uint32
 	materials			[]*rende.Material
-
+	currentMaterial		*rende.Material
 	filePath			string
 }
 
@@ -29,7 +29,7 @@ func (o *objectParsingProcess) Prepare() error {
 
 	// fmt.Println("lens", len(o.vertices), len(o.verticesNormals))
 
-	if len(o.vertices) != len(o.verticesNormals) {
+	if len(o.verticesNormals) == 0 {
 		normVertices := geom.NormalizeVertices(o.vertices)
 		if normVertices == nil {
 			return ErrNormFailed 

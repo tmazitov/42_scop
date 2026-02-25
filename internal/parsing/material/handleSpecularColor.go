@@ -7,12 +7,17 @@ import (
 
 // specularColorHandler parsing specular color following RGB standard format,
 // where each of values has a float type and belongs to the range from 0 to 1.
-func specularColorHandler(material *rende.Material, args []string) error {
+func specularColorHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) != 4 {
 		return ErrInvalidSpecularColorLine
 	}
 
+	var material *rende.Material
+	if material = proc.currentMaterial(); material == nil {
+		return ErrInvalidFile
+	}
+	
 	color, err := parseColor(args[1:])
 	if err != nil {
 		return fmt.Errorf("%w : %w", ErrInvalidSpecularColorLine, err)

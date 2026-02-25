@@ -21,16 +21,22 @@ func isPath(s string) bool {
            strings.Contains(s, string(filepath.Separator))
 }
 
-func diffuseTextureMapHandler(material *rende.Material, args []string) error {
+func diffuseTextureMapHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) != 2 {
 		return ErrInvalidDiffuseTextureMapLine
+	}
+
+
+	var material *rende.Material
+	if material = proc.currentMaterial(); material == nil {
+		return ErrInvalidFile
 	}
 	
 	texturePath := args[1]
 
 	if !isPath(texturePath) {
-		texturePath = filepath.Join(filepath.Dir(material.SourcePath), texturePath)
+		texturePath = filepath.Join(filepath.Dir(proc.sourcePath), texturePath)
 	}
 
 	file, err := os.Open(texturePath)

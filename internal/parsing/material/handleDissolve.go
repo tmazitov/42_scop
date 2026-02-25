@@ -7,10 +7,16 @@ import (
 )
 
 // dissolveHandler parsing dissolve value that has a float type and belongs to the range from 0 to 1.
-func dissolveHandler(material *rende.Material, args []string) error {
+func dissolveHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) != 2 {
 		return ErrInvalidDissolveLine
+	}
+
+
+	var material *rende.Material
+	if material = proc.currentMaterial(); material == nil {
+		return ErrInvalidFile
 	}
 
 	rawValue, err := strconv.ParseFloat(args[1], 32)
