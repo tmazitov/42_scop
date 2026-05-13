@@ -26,19 +26,9 @@ func newObjectParsingProcess(filePath string) *objectParsingProcess {
 }
 
 func (o *objectParsingProcess) Prepare() error {
-
-	// fmt.Println("lens", len(o.vertices), len(o.verticesNormals))
-
 	if len(o.verticesNormals) == 0 {
-		normVertices := geom.NormalizeVertices(o.vertices)
-		if normVertices == nil {
-			return ErrNormFailed 
-		}
-		for index, nv := range normVertices {
-			o.vertices[index].SetNorm(nv)
-		}
+		o.vertices, o.indices = geom.ComputeSmoothNormals(o.vertices, o.indices, 0.5)
 	}
-
 	return nil
 }
 
