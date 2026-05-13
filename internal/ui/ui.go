@@ -24,10 +24,10 @@ func (ui *UI) AddStaticText(text *Text) {
 	ui.texts = append(ui.texts, text)
 }
  
-func (ui *UI) IsPressed(xpos, ypos float32) ElementHandleFunc {
+func (ui *UI) IsPressed(xpos, ypos float32) *Button {
 	for _, button := range ui.buttons {
 		if button.IsPressed(xpos, ypos) {
-			return button.OnClickHandler()
+			return button
 		}
 	}
 	return nil

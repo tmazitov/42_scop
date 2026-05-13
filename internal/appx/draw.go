@@ -10,10 +10,18 @@ import (
 func (a *App) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     
-	projection := rende.MakeProjection(a.screenSize, 1093.55, a.Camera().Zoom)
+	projection := rende.MakeProjection(a.screenSize, 100.0, a.Camera().Zoom)
+
+	if a.state.IsVertexOnly {
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+	} else {
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+	}
 
     a.DrawScene(projection)
-    
+     
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+
     a.DrawUI()
     
     a.Window().Core().SwapBuffers()

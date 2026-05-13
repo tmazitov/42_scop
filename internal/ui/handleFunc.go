@@ -1,3 +1,3 @@
 package ui
 
-type ElementHandleFunc func(xpos, ypos float32) error
+type ElementHandleFunc func(instance *Button, xpos, ypos float32) error

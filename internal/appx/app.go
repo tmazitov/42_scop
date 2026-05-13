@@ -103,11 +103,7 @@ func (a *App) AddObjects(objs ...*rende.Object) {
 	var y float32 = 32
 	var x float32 = a.screenSize.Width - float32(200)
 	for _, objectInfoElem := range a.objects[0].Info() {
-		text, err := ui.NewText(objectInfoElem, x, y)
-		if err != nil {
-			log.Println("err : ", err)
-			continue
-		}
+		text := ui.NewText(objectInfoElem, x, y)
 		a.ui.AddStaticText(text)
 		y += 28
 	}

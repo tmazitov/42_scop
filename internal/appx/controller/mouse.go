@@ -11,11 +11,11 @@ func (c *Controller) mouseClickCallback(window *glfw.Window, button glfw.MouseBu
 	if button == glfw.MouseButtonLeft && action == glfw.Release {
 		xpos, ypos := window.GetCursorPos()
 	
-		action := c.app.UI().IsPressed(float32(xpos), float32(ypos))
-		if action == nil {
+		pressedButton := c.app.UI().IsPressed(float32(xpos), float32(ypos))
+		if pressedButton == nil {
 			return ;
 		}
-		err := action(float32(xpos), float32(ypos))
+		err := pressedButton.HandleClick(float32(xpos), float32(ypos))
 		if err != nil {
 			log.Println("ui pressed error : ", err)
 		}

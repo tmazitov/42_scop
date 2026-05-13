@@ -4,24 +4,34 @@ import (
 	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/tmazitov/42_scop/internal/clr"
 	"github.com/tmazitov/42_scop/internal/ui"
-	"github.com/go-gl/gl/v2.1/gl"
 )
 
 func (a *App) SetupButtons() {
-	a.ui.AddButton(ui.NewButton().	
+
+	enabledColor := clr.NewColor(245, 193, 24)
+	disabledColor := clr.NewColor(54, 50, 40)
+
+	buttons := []*ui.Button{
+		ui.NewButton().	
 		SetPos(&geom.Pos{X: 10, Y: 10, Z: 1}).
-		SetSize(40, 40).
-		SetColor(clr.NewColor(0, 0, 255)).
-		SetOnClick(func (xpos, ypos float32) error {
+		SetSize(40, 120).
+		SetColor(enabledColor).
+		SetText("Vertex Mode").
+		SetOnClick(func (instance *ui.Button, xpos, ypos float32) error {
 			
 			a.state.IsVertexOnly = !a.state.IsVertexOnly
 
 			if a.state.IsVertexOnly {
-				gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+				instance.SetColor(disabledColor).SetText("Fill Mode")
 			} else {
-				gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+				instance.SetColor(enabledColor).SetText("Vertex Mode")
 			}
 
 			return nil
-		}))
+		}),
+	}
+
+	for _, btn := range buttons {
+		a.ui.AddButton(btn)
+	}
 }

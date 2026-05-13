@@ -20,7 +20,7 @@ type Text struct {
 	pos		  geom.Pos
 }
 
-func NewText(text string, x, y float32) (*Text, error) {
+func NewText(text string, x, y float32) *Text {
 	// Measure text width automatically
 	face := basicfont.Face7x13
 	width := font.MeasureString(face, text).Ceil()
@@ -73,7 +73,7 @@ func NewText(text string, x, y float32) (*Text, error) {
 			X: x,
 			Y: y,
 		},
-	}, nil
+	}
 }
 
 func (b *Text) Draw() {
