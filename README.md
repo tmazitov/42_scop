@@ -1,5 +1,5 @@
 ### Features to implement
-[] Add a button to run the infinite rotation.
+[x] Add a button to run the infinite rotation.
 [] Add a button that enable the model's texture
 [] Substitute the external libs except `go-gl`
 [] Parse all .obj parameters

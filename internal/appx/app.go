@@ -83,6 +83,12 @@ func NewApp(config *Config) (*App, error) {
 // Rest of your methods remain the same...
 func (a *App) Process() {
 	a.controller.ProcessInput(a.window.Core(), a.camera)
+
+	if a.state.IsRotationEnabled {
+		for _, obj := range a.objects {
+			obj.Rotate(0, 0.001, 0)
+		}
+	}
 }
 
 func (a *App) Camera() *camera.Camera {

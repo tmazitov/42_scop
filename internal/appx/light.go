@@ -1,13 +1,8 @@
 package appx
 
 import (
-	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/go-gl/gl/v2.1/gl"
 )
-
-type Lighter struct {
-	pos *geom.Pos
-}
 
 func initLight() {
     gl.Enable(gl.LIGHTING)
@@ -21,7 +16,7 @@ func initLight() {
     gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
     
     // Adjust diffuse light
-    diffuse := []float32{0.7, 0.7, 0.7, 1.0}  // Main light intensity
+    diffuse := []float32{0.3, 0.3, 0.3, 1.0}  // Main light intensity
     gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
     
     // Specular for highlights

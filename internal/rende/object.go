@@ -8,11 +8,12 @@ import (
 )
 
 type Object struct {
-	name 	string
-	shape 	[]*geom.Vertex
-	indices []uint32
-	vao 	uint32
+	name 	  string
+	shape 	  []*geom.Vertex
+	indices   []uint32
+	vao 	  uint32
 	materials []*Material
+	pivot     geom.Pos
 }
 
 func NewObject(name string) *Object {
@@ -25,13 +26,40 @@ func NewObject(name string) *Object {
 	}
 }
 
+func bottomCenter(shape []*geom.Vertex) geom.Pos {
+	minX, maxX := shape[0].Pos.X, shape[0].Pos.X
+	minY := shape[0].Pos.Y
+	minZ, maxZ := shape[0].Pos.Z, shape[0].Pos.Z
+	for _, v := range shape[1:] {
+		if v.Pos.X < minX { minX = v.Pos.X }
+		if v.Pos.X > maxX { maxX = v.Pos.X }
+		if v.Pos.Y < minY { minY = v.Pos.Y }
+		if v.Pos.Z < minZ { minZ = v.Pos.Z }
+		if v.Pos.Z > maxZ { maxZ = v.Pos.Z }
+	}
+	return geom.Pos{X: (minX + maxX) / 2, Y: minY, Z: (minZ + maxZ) / 2}
+}
+
 func (o *Object) Info() []string{
 	return []string{
 		fmt.Sprintf("Name: %s", o.name),
 		fmt.Sprintf("Vertices: %d", len(o.shape)),
 		fmt.Sprintf("Faces: %d", len(o.indices) / 3),
 	}
-}	
+}
+
+func (o *Object) Rotate(angleX, angleY, angleZ float32) {
+	for _, vertex := range o.shape {
+		vertex.Pos.X -= o.pivot.X
+		vertex.Pos.Y -= o.pivot.Y
+		vertex.Pos.Z -= o.pivot.Z
+		vertex.Rotate(angleX, angleY, angleZ)
+		vertex.Pos.X += o.pivot.X
+		vertex.Pos.Y += o.pivot.Y
+		vertex.Pos.Z += o.pivot.Z
+	}
+	o.vao = 0
+}
   
 func (o *Object) Draw(screenSize ScreenSize) {
 
@@ -56,6 +84,9 @@ func (o *Object) Draw(screenSize ScreenSize) {
 
 func (o *Object) SetShape(shape []*geom.Vertex) *Object {
 	o.shape = shape
+	if len(shape) > 0 {
+		o.pivot = bottomCenter(shape)
+	}
 	return o
 }
 func (o *Object) SetIndices(indices []uint32) *Object {
