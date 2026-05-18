@@ -7,7 +7,8 @@ import (
 type objLineType int8
 
 const (
-    objVertex objLineType = iota
+	objVertex objLineType = iota
+	objInit
 	objVertexTexture
 	objVertexNormal
 	objFace
@@ -16,15 +17,16 @@ const (
 	objNone
 )
 
-var objLineDictionary = map[string]objLineType {
-	"v" 	: objVertex,
-	"vt"	: objVertexTexture,
-	"vn"	: objVertexNormal,
-	"f"		: objFace,
+var objLineDictionary = map[string]objLineType{
+	"o":      objInit,
+	"v":      objVertex,
+	"vt":     objVertexTexture,
+	"vn":     objVertexNormal,
+	"f":      objFace,
 	"mtllib": objNewMaterial,
 	"usemtl": objUseMaterial,
 }
-	
+
 func filterObjFileLine(line string) (objLineType, []string) {
 	if len(line) == 0 {
 		return objNone, nil
@@ -39,5 +41,5 @@ func filterObjFileLine(line string) (objLineType, []string) {
 	if !ok {
 		return objNone, nil
 	}
-	return lineType, args 
+	return lineType, args
 }

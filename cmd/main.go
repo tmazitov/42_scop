@@ -24,16 +24,13 @@ func main() {
 	}
 	defer app.Close()
 
-	obj, err := objectParsing.ParseObj(config.ObjectPath)
+	objects, err := objectParsing.ParseObj(config.ObjectPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.AddObjects(obj)
+	app.AddObjects(objects...)
 
 	render(app, config)
 }
-
-
-
 
 // initGlfw initializes glfw and returns a Window to use.

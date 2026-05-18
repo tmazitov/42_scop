@@ -3,13 +3,15 @@ package appx
 import (
 	"github.com/go-gl/gl/v2.1/gl"
 	// "github.com/go-gl/glfw/v3.2/glfw"
+	"log"
+
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/tmazitov/42_scop/internal/appx/camera"
+	"github.com/tmazitov/42_scop/internal/appx/controller"
+	"github.com/tmazitov/42_scop/internal/appx/window"
+	"github.com/tmazitov/42_scop/internal/geom"
 	"github.com/tmazitov/42_scop/internal/rende"
 	"github.com/tmazitov/42_scop/internal/ui"
-	"github.com/tmazitov/42_scop/internal/appx/camera"
-	"github.com/tmazitov/42_scop/internal/appx/window"
-	"github.com/tmazitov/42_scop/internal/appx/controller"
-	"log"
 )
 
 type App struct {
@@ -17,13 +19,11 @@ type App struct {
 	controller *controller.Controller
 	window     *window.Window
 	camera     *camera.Camera
-	state	   *State
-	ui		   *ui.UI
+	state      *State
+	ui         *ui.UI
 	objects    []*rende.Object
 	screenSize rende.ScreenSize
 }
-
-
 
 // initOpenGL initializes OpenGL (no shaders needed)
 func initOpenGL() error {
@@ -55,18 +55,18 @@ func NewApp(config *Config) (*App, error) {
 		return nil, err
 	}
 	app := &App{
-		config:  config,
-		window:  win,
-		state:	 NewState(),
-		camera:  camera.NewCamera(
+		config: config,
+		window: win,
+		state:  NewState(),
+		camera: camera.NewCamera(
 			mgl32.Vec3{
 				0, 0, 0,
 			}).
 			SetMouseSensitivity(0.1).
 			SetVisionAngle(0, -90),
-		objects: nil,
+		objects:    nil,
 		controller: nil,
-		ui:			ui.NewUI(),
+		ui:         ui.NewUI(),
 		screenSize: rende.ScreenSize{
 			Height: float32(config.Window.Height),
 			Width:  float32(config.Window.Width),
@@ -105,26 +105,30 @@ func (a *App) ScreenSize() rende.ScreenSize {
 
 func (a *App) AddObjects(objs ...*rende.Object) {
 	a.objects = append(a.objects, objs...)
-	
-	var y float32 = 32
-	var x float32 = a.screenSize.Width - float32(200)
-	for _, objectInfoElem := range a.objects[0].Info() {
-		text := ui.NewText(objectInfoElem, x, y)
-		a.ui.AddStaticText(text)
-		y += 28
+
+	// var y float32 = 32
+	// var x float32 = a.screenSize.Width - float32(200)
+	var shape []*geom.Vertex
+	for _, o := range a.objects {
+		shape = append(shape, o.Shape()...)
 	}
 
-	pos := calculateCameraPosition(a.objects[0].Shape())
+	// for _, objectInfoElem := range a.objects[0].Info() {
+	// 	text := ui.NewText(objectInfoElem, x, y)
+	// 	a.ui.AddStaticText(text)
+	// 	y += 28
+	// }
 
-	speed := calculateCameraSpeed(a.objects[0].Shape())
+	pos := calculateCameraPosition(shape)
+	speed := calculateCameraSpeed(shape)
 
 	a.camera.
-	SetMovementSpeed(speed).
-	SetPosition(mgl32.Vec3{
-		pos.X,
-		pos.Y,
-		pos.Z,
-	})
+		SetMovementSpeed(speed).
+		SetPosition(mgl32.Vec3{
+			pos.X,
+			pos.Y,
+			pos.Z,
+		})
 }
 
 func (a *App) Objects() []*rende.Object {

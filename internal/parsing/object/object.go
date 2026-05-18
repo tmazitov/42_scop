@@ -1,20 +1,20 @@
 package objectParsing
 
 import (
-	"github.com/tmazitov/42_scop/internal/rende"
 	"bufio"
 	"fmt"
 	"log"
-	"path/filepath"
 	"os"
+
+	"github.com/tmazitov/42_scop/internal/rende"
 )
 
-
-func ParseObj(filePath string) (*rende.Object, error) {
+func ParseObj(filePath string) ([]*rende.Object, error) {
 
 	var (
-		object *rende.Object
-		objectParseProcess = newObjectParsingProcess(filePath)
+		objects            []*rende.Object
+		materials          *materialStorage      = newMaterialStorage(filePath)
+		objectParseProcess *objectParsingProcess = newObjectParsingProcess("Default", filePath, materials)
 	)
 
 	file, err := os.Open(filePath)
@@ -23,25 +23,46 @@ func ParseObj(filePath string) (*rende.Object, error) {
 	}
 	defer file.Close()
 
-	object = rende.NewObject(filepath.Base(filePath))
+	// Create a new scanner to read the file line by line
+	scanner := bufio.NewScanner(file)
 
-    // Create a new scanner to read the file line by line
-    scanner := bufio.NewScanner(file)
-
-    // Loop through the file and read each line
+	// Loop through the file and read each line
 	var (
-		counter = -1
+		counter  = -1
 		lineArgs []string
 		lineType objLineType
 	)
 
-    for scanner.Scan() {
+main:
+	for scanner.Scan() {
 		counter++
-        line := scanner.Text() // Get the line as a string
-		lineType, lineArgs = filterObjFileLine(line) 
-		if lineType == objNone{
+		line := scanner.Text() // Get the line as a string
+		lineType, lineArgs = filterObjFileLine(line)
+
+		switch lineType {
+		case objNone:
 			log.Printf("obj parsing warn : unsupported line '%s'\n", line)
-			continue
+			continue main
+		case objInit:
+
+			if len(lineArgs) != 2 {
+				return nil, ErrInvalidInitObjectLine
+			}
+
+			// Complete previous process
+			if objectParseProcess != nil && !objectParseProcess.IsEmpty() {
+				o, err := objectParseProcess.ToObject()
+				if err != nil {
+					return nil, err
+				}
+				objects = append(objects, o)
+			}
+
+			// Init new object
+			name := lineArgs[1]
+			objectParseProcess = newObjectParsingProcess(name, filePath, materials)
+
+			continue main
 		}
 
 		lineHandler, ok := objParsingActionsDictionary[lineType]
@@ -53,20 +74,19 @@ func ParseObj(filePath string) (*rende.Object, error) {
 		if err != nil {
 			return nil, fmt.Errorf("obj parsing line %d error : %w", counter, err)
 		}
-    }
+	}
 
-    if err := scanner.Err(); err != nil {
-		return nil, err
-    }
-
-	if err := objectParseProcess.Prepare(); err != nil {
+	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
-	object.
-		SetShape(objectParseProcess.vertices).
-		SetIndices(objectParseProcess.indices).
-		SetMaterials(objectParseProcess.materials)
+	o, err := objectParseProcess.ToObject()
+	if err != nil {
+		return nil, err
+	}
+	objects = append(objects, o)
 
-	return object, nil
+	fmt.Println("objs: ", len(objects))
+
+	return objects, nil
 }

@@ -1,24 +1,24 @@
 package objectParsing
 
 import (
-	"github.com/tmazitov/42_scop/internal/geom"
-	"strings"
-	"strconv"
 	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
 // Face: format is v/vt/vn
 func parseTexturesAndNormals(object *objectParsingProcess, vertex *geom.Vertex, key vertexKey) {
-	
-	if textureId := key.Texture(); textureId >= 0 && textureId < len(object.verticesTextures){
+
+	if textureId := key.Texture(); textureId >= 0 && textureId < len(object.verticesTextures) {
 		vertex.SetTextureCoords(object.verticesTextures[textureId])
 	}
-	
-	if normId := key.Norm(); normId >= 0 && normId < len(object.verticesNormals){
+
+	if normId := key.Norm(); normId >= 0 && normId < len(object.verticesNormals) {
 		vertex.SetNormByVector(object.verticesNormals[normId])
 	}
 }
-
 
 func faceHandler(object *objectParsingProcess, args []string) error {
 
@@ -29,7 +29,7 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 	// Parse vertex indices (handle v, v/vt, v/vt/vn formats)
 	vector := make([]uint32, 0, len(args)-1)
 	for _, part := range args[1:] {
-		
+
 		// Split by "/" to handle texture and normal coordinates
 		// Example: "1/2/3" -> we want just "1"
 		vertexRawData := strings.Split(part, "/")
@@ -52,7 +52,7 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 				return fmt.Errorf("%w : invalid vertex index: 0 (OBJ uses 1-based indexing)", ErrInvalidFaceLine)
 			}
 
-			vertexData = append(vertexData, uint32(convertedElem - 1))
+			vertexData = append(vertexData, uint32(convertedElem-1))
 		}
 
 		if int(vertexData[0]) >= len(object.verticesCoords) {
@@ -60,19 +60,18 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 		}
 		key := newVertexKey(vertexData)
 
-        // Check if this exact combination already exists
+		// Check if this exact combination already exists
 		if existingIdx, ok := object.verticesCache[key]; ok {
 			vector = append(vector, existingIdx)
 		} else {
 			vertexCoords := object.verticesCoords[key.Pos()]
-			newVertex := geom.NewVertex(vertexCoords) 
+			newVertex := geom.NewVertex(vertexCoords)
 			parseTexturesAndNormals(object, newVertex, key)
-			
-			
+
 			newIdx := uint32(len(object.vertices))
 			object.vertices = append(object.vertices, newVertex)
 			object.verticesCache[key] = newIdx
-			
+
 			vector = append(vector, newIdx)
 		}
 	}
@@ -80,20 +79,21 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 	// Triangulate polygon using fan triangulation
 	triangleCount := len(vector) - 2
 	triangulated := make([]uint32, 0, triangleCount*3)
-	
+
 	for i := 1; i < len(vector)-1; i++ {
-		triangulated = append(triangulated, 
+		triangulated = append(triangulated,
 			vector[0],
 			vector[i],
 			vector[i+1],
 		)
 	}
 
-
 	object.indices = append(object.indices, triangulated...)
 
-	if object.currentMaterial != nil {
-		object.currentMaterial.IncreaseRange(len(triangulated))
+	if object.materials != nil {
+		for _, m := range object.materials {
+			m.IncreaseRange(len(triangulated))
+		}
 	}
 
 	return nil
