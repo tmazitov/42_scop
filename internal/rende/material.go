@@ -63,24 +63,16 @@ func (m *Material) Apply() {
         gl.Disable(gl.TEXTURE_2D)
     }
     
-    // Apply colors as before
-    if m.diffuseColor != nil {
-        diffuse := m.diffuseColor.Vector()
-        gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, &diffuse[0])
-        gl.Color4fv(&diffuse[0])
-    }
-
     // Ambient Color (Ka)
     if m.ambientColor != nil {
         ambient := m.ambientColor.Vector()
         gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, &ambient[0])
     }
-    
-    // Diffuse Color (Kd)
+
+    // Diffuse Color (Kd) — alpha comes from dissolve, not from the color itself
     if m.diffuseColor != nil {
         diffuse := m.diffuseColor.Vector()
-        // Apply dissolve to alpha channel
-        diffuse[3] *= m.dissolve
+        diffuse[3] = m.dissolve
         gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, &diffuse[0])
         gl.Color4fv(&diffuse[0])
     }
