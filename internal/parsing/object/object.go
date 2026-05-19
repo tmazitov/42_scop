@@ -14,7 +14,8 @@ func ParseObj(filePath string) ([]*rende.Object, error) {
 	var (
 		objects            []*rende.Object
 		materials          *materialStorage      = newMaterialStorage(filePath)
-		objectParseProcess *objectParsingProcess = newObjectParsingProcess("Default", filePath, materials)
+		sharedVertices     *vertexStorage        = newVertexStorage()
+		objectParseProcess *objectParsingProcess = newObjectParsingProcess("Default", filePath, materials, sharedVertices)
 	)
 
 	file, err := os.Open(filePath)
@@ -58,9 +59,9 @@ main:
 				objects = append(objects, o)
 			}
 
-			// Init new object
+			// Init new object (shares global vertex/texture/normal arrays)
 			name := lineArgs[1]
-			objectParseProcess = newObjectParsingProcess(name, filePath, materials)
+			objectParseProcess = newObjectParsingProcess(name, filePath, materials, sharedVertices)
 
 			continue main
 		}
@@ -84,9 +85,8 @@ main:
 	if err != nil {
 		return nil, err
 	}
-	objects = append(objects, o)
 
-	fmt.Println("objs: ", len(objects))
+	objects = append(objects, o)
 
 	return objects, nil
 }

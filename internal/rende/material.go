@@ -22,7 +22,7 @@ type Material struct {
 func NewMaterial() *Material {
 	return &Material{
 		name: "",
-		dissolve: 0.0,
+		dissolve: 1.0,
 		density: 0.0,
 		shininess: 0.0,
 		ambientColor: nil,

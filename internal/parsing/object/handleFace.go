@@ -11,12 +11,11 @@ import (
 // Face: format is v/vt/vn
 func parseTexturesAndNormals(object *objectParsingProcess, vertex *geom.Vertex, key vertexKey) {
 
-	if textureId := key.Texture(); textureId >= 0 && textureId < len(object.verticesTextures) {
-		vertex.SetTextureCoords(object.verticesTextures[textureId])
+	if textureId := key.Texture(); textureId >= 0 && textureId < len(object.vertexStorage.textures) {
+		vertex.SetTextureCoords(object.vertexStorage.textures[textureId])
 	}
-
-	if normId := key.Norm(); normId >= 0 && normId < len(object.verticesNormals) {
-		vertex.SetNormByVector(object.verticesNormals[normId])
+	if normId := key.Norm(); normId >= 0 && normId < len(object.vertexStorage.normals) {
+		vertex.SetNormByVector(object.vertexStorage.normals[normId])
 	}
 }
 
@@ -25,6 +24,7 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 	if len(args) < 4 {
 		return ErrInvalidFaceLine
 	}
+
 
 	// Parse vertex indices (handle v, v/vt, v/vt/vn formats)
 	vector := make([]uint32, 0, len(args)-1)
@@ -55,7 +55,7 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 			vertexData = append(vertexData, uint32(convertedElem-1))
 		}
 
-		if int(vertexData[0]) >= len(object.verticesCoords) {
+		if int(vertexData[0]) >= len(object.vertexStorage.coords) {
 			return ErrInvalidFaceLine
 		}
 		key := newVertexKey(vertexData)
@@ -64,7 +64,7 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 		if existingIdx, ok := object.verticesCache[key]; ok {
 			vector = append(vector, existingIdx)
 		} else {
-			vertexCoords := object.verticesCoords[key.Pos()]
+			vertexCoords := object.vertexStorage.coords[key.Pos()]
 			newVertex := geom.NewVertex(vertexCoords)
 			parseTexturesAndNormals(object, newVertex, key)
 

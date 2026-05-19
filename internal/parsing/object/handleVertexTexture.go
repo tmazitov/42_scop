@@ -21,7 +21,7 @@ func vertexTextureHandler(object *objectParsingProcess, args []string) error {
 
 	result[1] = 1.0 - result[1] // important to flip
 
-	object.verticesTextures = append(object.verticesTextures, result)
+	object.vertexStorage.textures = append(object.vertexStorage.textures, result)
 
 	return nil
 }	

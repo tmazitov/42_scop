@@ -19,7 +19,7 @@ func vertexNormalHandler(object *objectParsingProcess, args []string) error {
 		result[index] = float32(value)
 	}
 
-	object.verticesNormals = append(object.verticesNormals, result)
+	object.vertexStorage.normals = append(object.vertexStorage.normals, result)
 
 	return nil
 }

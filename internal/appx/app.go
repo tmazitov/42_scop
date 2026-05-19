@@ -86,7 +86,7 @@ func (a *App) Process() {
 
 	if a.state.IsRotationEnabled {
 		for _, obj := range a.objects {
-			obj.Rotate(0, 0.001, 0)
+			obj.Rotate(0, a.config.RotationSpeed, 0)
 		}
 	}
 }

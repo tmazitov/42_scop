@@ -1,18 +1,13 @@
 package rende
 
 import (
-	"fmt"
-
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/tmazitov/42_scop/internal/geom"
-	// "fmt"
 )
 
 func MakeVao(screen ScreenSize, indices []uint32, points []*geom.Vertex) uint32 {
 	// Interleave position, normal, and texture coordinates
 	var vertexData []float32
-
-	fmt.Println("count of points", len(points))
 
 	for _, point := range points {
 		vertexData = append(vertexData, point.Pos.X, point.Pos.Y, point.Pos.Z)    // Position

@@ -6,4 +6,5 @@ import (
 
 type Config struct {
 	Window *window.WindowOptions
+	RotationSpeed float32
 }

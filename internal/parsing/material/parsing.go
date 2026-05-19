@@ -33,7 +33,8 @@ var (
 		mtlDiffuseColor: diffuseColorHandler,
 		mtlOpticalDensity: opticalDensityHandler,
 		mtlSpecularColor: specularColorHandler,
-		mtlDissolve: dissolveHandler,
+		mtlDissolve:      dissolveHandler,
+		mtlTransparency:  transparencyHandler,
 		mtlIlluminationModel: illuminationModelHandler,
 		mtlDiffuseTextureMap: diffuseTextureMapHandler,
 	}

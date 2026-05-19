@@ -14,6 +14,7 @@ import (
 type Config struct {
 	ObjectPath 		string
 	Window *window.WindowOptions
+	RotationSpeed float32
 }
 
 func loadVar(name string, defaultValue string) string {
@@ -56,8 +57,15 @@ func SetupConfig() (*Config, error) {
 
 	objName := filepath.Base(objFile)
 
+	rotationSpeed := loadVar("ROTATION_SPEED", "0.1")
+	rotationSpeedFloat, err := strconv.ParseFloat(rotationSpeed, 32)
+	if err != nil {
+		return nil, errors.New("config error : invalid rotation speed")
+	}
+
 	return &Config{
 		ObjectPath: objFile,
+		RotationSpeed: float32(rotationSpeedFloat),
 		Window:  &window.WindowOptions{
 			Title: loadVar("WINDOW_TITLE", "SCOP | " + objName),
 			Height: size[0],
@@ -69,5 +77,6 @@ func SetupConfig() (*Config, error) {
 func (c *Config) ToAppConfig() *appx.Config {
 	return &appx.Config{
 		Window: c.Window,
+		RotationSpeed: c.RotationSpeed,
 	}
 }

@@ -21,7 +21,7 @@ func vertexHandler(object *objectParsingProcess, args []string) error {
 	}
 
 	
-	object.verticesCoords = append(object.verticesCoords, coords)
+	object.vertexStorage.coords = append(object.vertexStorage.coords, coords)
 
 	return nil
 }

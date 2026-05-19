@@ -14,6 +14,7 @@ const (
     mtlSpecularColor
     mtlOpticalDensity
     mtlDissolve
+    mtlTransparency
     mtlIlluminationModel
 	mtlDiffuseTextureMap
     mtlNone
@@ -27,6 +28,7 @@ var mtlLineDictionary = map[string]mtlLineType {
 	"Ks"	 : mtlSpecularColor,
 	"Ni"	 : mtlOpticalDensity,
 	"d"		 : mtlDissolve,
+	"Tr"	 : mtlTransparency,
 	"illum"	 : mtlIlluminationModel,
 	"map_Kd" : mtlDiffuseTextureMap,
 }

@@ -6,31 +6,42 @@ import (
 	// "fmt"
 )
 
-type objectParsingProcess struct {
-	vertices         []*geom.Vertex
-	verticesTextures [][2]float32
-	verticesNormals  [][3]float32
-	verticesCoords   [][3]float32
-	verticesCache    map[vertexKey]uint32
-	indices          []uint32
-	materials        []*rende.Material
-	currentMaterial  *rende.Material
-	filePath         string
-	materialStorage  *materialStorage
-	name             string
+// vertexStorage holds the raw global vertex arrays shared across all objects in one .obj file.
+// In OBJ format, v/vt/vn indices are global — they don't reset per 'o' declaration.
+type vertexStorage struct {
+	coords   [][3]float32
+	textures [][2]float32
+	normals  [][3]float32
 }
 
-func newObjectParsingProcess(name, filePath string, materialStorage *materialStorage) *objectParsingProcess {
+func newVertexStorage() *vertexStorage {
+	return &vertexStorage{}
+}
+
+type objectParsingProcess struct {
+	vertices        []*geom.Vertex
+	verticesCache   map[vertexKey]uint32
+	indices         []uint32
+	materials       []*rende.Material
+	currentMaterial *rende.Material
+	filePath        string
+	materialStorage *materialStorage
+	vertexStorage   *vertexStorage
+	name            string
+}
+
+func newObjectParsingProcess(name, filePath string, materialStorage *materialStorage, vertexStorage *vertexStorage) *objectParsingProcess {
 	return &objectParsingProcess{
 		name:            name,
 		filePath:        filePath,
 		materialStorage: materialStorage,
+		vertexStorage:   vertexStorage,
 		verticesCache:   make(map[vertexKey]uint32),
 	}
 }
 
 func (o *objectParsingProcess) ToObject() (*rende.Object, error) {
-	if len(o.verticesNormals) == 0 {
+	if len(o.vertexStorage.normals) == 0 {
 		o.vertices, o.indices = geom.ComputeSmoothNormals(o.vertices, o.indices, 0.5)
 	}
 
@@ -43,8 +54,7 @@ func (o *objectParsingProcess) ToObject() (*rende.Object, error) {
 }
 
 func (o *objectParsingProcess) IsEmpty() bool {
-	return len(o.verticesNormals) == 0 &&
-		len(o.indices) == 0
+	return len(o.indices) == 0
 }
 
 type vertexKey [3]int
