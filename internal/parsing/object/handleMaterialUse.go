@@ -1,8 +1,10 @@
 package objectParsing
 
+import "log"
+
 func materialUseHandler(object *objectParsingProcess, args []string) error {
 
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return ErrInvalidUseMaterialLine
 	}
 
@@ -10,7 +12,8 @@ func materialUseHandler(object *objectParsingProcess, args []string) error {
 
 	material := object.materialStorage.Find(materialName)
 	if material == nil {
-		return ErrInvalidUseMaterialLine
+		log.Printf("obj parsing warn : material '%s' not found, skipping\n", materialName)
+		return nil
 	}
 
 	material.StartRange(len(object.indices))

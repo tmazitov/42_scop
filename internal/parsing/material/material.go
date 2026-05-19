@@ -37,7 +37,7 @@ func ParseMtl(filePath string) ([]*rende.Material, error) {
         line := scanner.Text() // Get the line as a string
 		
 		if lineType, lineArgs = filterMtlFileLine(line); lineType == mtlNone{
-			log.Printf("mtl parsing warn : unsupported line '%s'\n", line)
+			log.Printf("mtl parsing warn : unsupported line '%s' with args %v\n", line, lineArgs)
 			continue
 		}
 

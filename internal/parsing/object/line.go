@@ -14,17 +14,25 @@ const (
 	objFace
 	objNewMaterial
 	objUseMaterial
+	objSmooth
+	objComment
 	objNone
 )
 
 var objLineDictionary = map[string]objLineType{
 	"o":      objInit,
+	"#":      objComment,
+	"g":      objComment, // groups are organizational, silently skip
+	"l":      objComment, // line elements, silently skip
+	"mg":     objComment, // merging groups, silently skip
+	"p":      objComment, // point elements, silently skip
 	"v":      objVertex,
 	"vt":     objVertexTexture,
 	"vn":     objVertexNormal,
 	"f":      objFace,
 	"mtllib": objNewMaterial,
 	"usemtl": objUseMaterial,
+	"s":      objSmooth,
 }
 
 func filterObjFileLine(line string) (objLineType, []string) {

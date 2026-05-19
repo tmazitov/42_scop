@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/tmazitov/42_scop/internal/rende"
 )
@@ -24,10 +25,9 @@ func ParseObj(filePath string) ([]*rende.Object, error) {
 	}
 	defer file.Close()
 
-	// Create a new scanner to read the file line by line
 	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
 
-	// Loop through the file and read each line
 	var (
 		counter  = -1
 		lineArgs []string
@@ -37,16 +37,21 @@ func ParseObj(filePath string) ([]*rende.Object, error) {
 main:
 	for scanner.Scan() {
 		counter++
-		line := scanner.Text() // Get the line as a string
+		line := scanner.Text()
+		if (len(line) == 0) {
+			continue
+		}
 		lineType, lineArgs = filterObjFileLine(line)
-
+		
 		switch lineType {
+		case objComment:
+			continue main
 		case objNone:
-			log.Printf("obj parsing warn : unsupported line '%s'\n", line)
+			log.Printf("obj parsing warn : unsupported line '%s' with args %v\n", line, lineArgs)
 			continue main
 		case objInit:
 
-			if len(lineArgs) != 2 {
+			if len(lineArgs) < 2 {
 				return nil, ErrInvalidInitObjectLine
 			}
 
@@ -60,7 +65,7 @@ main:
 			}
 
 			// Init new object (shares global vertex/texture/normal arrays)
-			name := lineArgs[1]
+			name := strings.Join(lineArgs[1:], " ")
 			objectParseProcess = newObjectParsingProcess(name, filePath, materials, sharedVertices)
 
 			continue main
@@ -81,12 +86,15 @@ main:
 		return nil, err
 	}
 
-	o, err := objectParseProcess.ToObject()
-	if err != nil {
-		return nil, err
-	}
+	// If last object is not empty, complete it
+	if !objectParseProcess.IsEmpty() {
+		o, err := objectParseProcess.ToObject()
+		if err != nil {
+			return nil, err
+		}
 
-	objects = append(objects, o)
+		objects = append(objects, o)
+	}
 
 	return objects, nil
 }

@@ -6,12 +6,16 @@ import (
 
 func vertexTextureHandler(object *objectParsingProcess, args []string) error {
 
-	if len(args) < 3 {
+	if len(args) < 2 {
 		return ErrInvalidVertexTextureLine
 	}
 
 	var result = [2]float32{0, 0}
-	for index, part := range args[1:3] {
+	limit := len(args)
+	if limit > 3 {
+		limit = 3 // ignore w in "vt u v w"
+	}
+	for index, part := range args[1:limit] {
 		value, err := strconv.ParseFloat(part, 32)
 		if err != nil {
 			return ErrInvalidVertexTextureLine

@@ -10,5 +10,6 @@ var (
 		objFace:          faceHandler,
 		objNewMaterial:   materialHandler,
 		objUseMaterial:   materialUseHandler,
+		objSmooth:        smoothGroupHandler,
 	}
 )

@@ -1,6 +1,7 @@
 package objectParsing
 
 import (
+	"math"
 	"strconv"
 )
 
@@ -17,6 +18,13 @@ func vertexNormalHandler(object *objectParsingProcess, args []string) error {
 			return ErrInvalidVertexNormalLine
 		}
 		result[index] = float32(value)
+	}
+
+	length := float32(math.Sqrt(float64(result[0]*result[0] + result[1]*result[1] + result[2]*result[2])))
+	if length > 0 {
+		result[0] /= length
+		result[1] /= length
+		result[2] /= length
 	}
 
 	object.vertexStorage.normals = append(object.vertexStorage.normals, result)

@@ -30,20 +30,25 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 	vector := make([]uint32, 0, len(args)-1)
 	for _, part := range args[1:] {
 
-		// Split by "/" to handle texture and normal coordinates
-		// Example: "1/2/3" -> we want just "1"
+		// slots: [0]=pos, [1]=texture, [2]=normal; -1 means absent
 		vertexRawData := strings.Split(part, "/")
-		if len(vertexRawData) == 0 {
+		if len(vertexRawData) == 0 || len(vertexRawData) > 3 {
 			return ErrInvalidFaceLine
 		}
 
-		// 0 - vertex index
-		// 1 - vertex texture array index
-		// 2 - vertex normal array index
-		vertexData := make([]uint32, 0, len(vertexRawData))
-		for _, rawElem := range vertexRawData {
+		storageLens := [3]int{
+			len(object.vertexStorage.coords),
+			len(object.vertexStorage.textures),
+			len(object.vertexStorage.normals),
+		}
 
-			convertedElem, err := strconv.ParseUint(rawElem, 10, 32)
+		var slots [3]int = [3]int{-1, -1, -1}
+		for slotIdx, rawElem := range vertexRawData {
+			if len(rawElem) == 0 {
+				continue // e.g. "1//3" — texture slot stays -1
+			}
+
+			convertedElem, err := strconv.ParseInt(rawElem, 10, 32)
 			if err != nil {
 				return ErrInvalidFaceLine
 			}
@@ -52,48 +57,54 @@ func faceHandler(object *objectParsingProcess, args []string) error {
 				return fmt.Errorf("%w : invalid vertex index: 0 (OBJ uses 1-based indexing)", ErrInvalidFaceLine)
 			}
 
-			vertexData = append(vertexData, uint32(convertedElem-1))
+			if convertedElem > 0 {
+				slots[slotIdx] = int(convertedElem) - 1
+			} else {
+				slots[slotIdx] = storageLens[slotIdx] + int(convertedElem)
+			}
 		}
 
-		if int(vertexData[0]) >= len(object.vertexStorage.coords) {
+		if slots[0] < 0 || slots[0] >= len(object.vertexStorage.coords) {
 			return ErrInvalidFaceLine
 		}
-		key := newVertexKey(vertexData)
-
-		// Check if this exact combination already exists
-		if existingIdx, ok := object.verticesCache[key]; ok {
-			vector = append(vector, existingIdx)
-		} else {
-			vertexCoords := object.vertexStorage.coords[key.Pos()]
-			newVertex := geom.NewVertex(vertexCoords)
-			parseTexturesAndNormals(object, newVertex, key)
-
-			newIdx := uint32(len(object.vertices))
-			object.vertices = append(object.vertices, newVertex)
-			object.verticesCache[key] = newIdx
-
-			vector = append(vector, newIdx)
+		if slots[2] >= 0 {
+			object.hasNormals = true
 		}
+		key := newVertexKey(slots)
+
+		// When smooth group is off, don't share vertices between faces so
+		// ComputeSmoothNormals produces flat (per-face) normals.
+		useCache := object.smoothGroup != 0
+
+		if useCache {
+			if existingIdx, ok := object.verticesCache[key]; ok {
+				vector = append(vector, existingIdx)
+				continue
+			}
+		}
+
+		vertexCoords := object.vertexStorage.coords[key.Pos()]
+		newVertex := geom.NewVertex(vertexCoords)
+		parseTexturesAndNormals(object, newVertex, key)
+
+		newIdx := uint32(len(object.vertices))
+		object.vertices = append(object.vertices, newVertex)
+		if useCache {
+			object.verticesCache[key] = newIdx
+		}
+		vector = append(vector, newIdx)
 	}
 
-	// Triangulate polygon using fan triangulation
-	triangleCount := len(vector) - 2
-	triangulated := make([]uint32, 0, triangleCount*3)
-
-	for i := 1; i < len(vector)-1; i++ {
-		triangulated = append(triangulated,
-			vector[0],
-			vector[i],
-			vector[i+1],
-		)
+	posFunc := func(idx uint32) [3]float32 {
+		p := object.vertices[idx].Pos
+		return [3]float32{p.X, p.Y, p.Z}
 	}
+	triangulated := earClipping(vector, posFunc)
 
 	object.indices = append(object.indices, triangulated...)
 
-	if object.materials != nil {
-		for _, m := range object.materials {
-			m.IncreaseRange(len(triangulated))
-		}
+	if len(object.materials) > 0 {
+		object.materials[len(object.materials)-1].IncreaseRange(len(triangulated))
 	}
 
 	return nil
