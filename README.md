@@ -2,6 +2,9 @@
 
 A 3D model viewer built with Go and OpenGL. Loads `.obj` files with `.mtl` materials, renders them with lighting and textures, and lets you navigate the scene freely.
 
+This project has been created as part
+of the 42 curriculum by [tmazitov](https://github.com/tmazitov).
+
 ![preview](resources/Rock-Texture-Surface.jpg)
 
 ## Features
@@ -54,7 +57,7 @@ sudo dnf install mesa-libGL-devel libXi-devel libXcursor-devel libXrandr-devel l
 
 ### 1. Install Go
 
-Requires **Go 1.24+**. Download from [go.dev/dl](https://go.dev/dl/) or via your package manager.
+Requires **Go 1.18+**. Download from [go.dev/dl](https://go.dev/dl/) or via your package manager.
 
 ### 2. Clone the repository
 
@@ -69,33 +72,30 @@ cd 42_scop
 go mod download
 ```
 
-### 4. Create a `.env` file
+### 4. Build
 
 ```bash
-cp .env.example .env
+make
 ```
 
-Or create `.env` manually:
+### 5. Run
+
+Pass the path to any `.obj` file as the first argument:
+
+```bash
+./scop resources/airplane.obj
+```
+
+## Configuration (optional)
+
+Window settings can be customised via a `.env` file in the project root.
+If the file is absent, the program starts with the defaults shown below.
 
 ```env
-OBJ_FILE_PATH=resources/42.obj
 WINDOW_TITLE=SCOP
-WINDOW_HEIGHT=800
-WINDOW_WIDTH=800
-```
-
-`OBJ_FILE_PATH` is required. `WINDOW_TITLE`, `WINDOW_HEIGHT`, and `WINDOW_WIDTH` are optional (defaults: `500x500`).
-
-### 5. Build and run
-
-```bash
-go build -o scop ./cmd && ./scop
-```
-
-Or use the provided script:
-
-```bash
-bash run.sh
+WINDOW_HEIGHT=720
+WINDOW_WIDTH=1080
+ROTATION_SPEED=0.1
 ```
 
 ## Sample models
@@ -106,14 +106,15 @@ The `resources/` directory includes several `.obj` files you can use right away:
 |---|---|
 | `resources/42.obj` | The 42 logo mesh with material |
 | `resources/Rock1.obj` | Rock model with texture |
-| `resources/airplane.obj` | Airplane model with material |
+| `resources/cat.obj` | Fancy cat model with texture |
+| `resources/airplane.obj` | Airplane model with two materials |
 | `resources/teapot.obj` | Classic Utah teapot |
 | `resources/teapot2.obj` | Utah teapot with material |
 
-To load any of them, set `OBJ_FILE_PATH` in your `.env`:
-
-```env
-OBJ_FILE_PATH=resources/airplane.obj
+```bash
+./scop resources/42.obj
+./scop resources/airplane.obj
+./scop resources/teapot.obj
 ```
 
 ## Project structure
@@ -123,7 +124,7 @@ OBJ_FILE_PATH=resources/airplane.obj
 ├── cmd/                  # Entry point, config loading, render loop
 ├── internal/
 │   ├── appx/             # Application, camera, controller, UI setup
-│   ├── geom/             # Vertex, position, normal types
+│   ├── geom/             # Vertex, position, Vec3, Mat4 types
 │   ├── clr/              # Color utilities
 │   ├── parsing/
 │   │   ├── object/       # .obj file parser
@@ -133,3 +134,13 @@ OBJ_FILE_PATH=resources/airplane.obj
 │   └── window/           # GLFW window wrapper
 └── resources/            # Sample .obj / .mtl / texture files
 ```
+
+## Resources
+
+- [OBJ file format specification](http://www.martinreddy.net/gfx/3d/OBJ.spec) — original Wavefront OBJ format reference
+- [MTL material format specification](http://www.paulbourke.net/dataformats/mtl/) — full list of MTL parameters and their meaning
+- [OpenGL 2.1 Reference Pages](https://registry.khronos.org/OpenGL-Refpages/gl2.1/) — fixed-function pipeline API reference
+- [Learn OpenGL](https://learnopengl.com/) — practical tutorials covering camera, lighting, and textures
+- [Scratchapixel — Rasterization](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation) — from-scratch explanation of the rendering pipeline
+- [Paul Bourke — 3D geometry](http://paulbourke.net/geometry/) — articles on normals, triangulation, and mesh processing
+- [Real-Time Rendering (book)](https://www.realtimerendering.com/) — comprehensive reference for graphics algorithms
