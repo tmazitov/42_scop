@@ -13,6 +13,8 @@ type Material struct {
 	ambientColor		*clr.Color
 	diffuseColor		*clr.Color
 	specularColor 		*clr.Color
+	emissiveColor		*clr.Color
+	transmissionFilter	*clr.Color
 	illuminationModel	int
 	textureId			uint32
     startIndex          int
@@ -82,6 +84,16 @@ func (m *Material) Apply() {
         specular := m.specularColor.Vector()
         gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, &specular[0])
     }
+
+    // Emissive Color (Ke) — reset to black if not set to avoid bleed between materials
+    if m.emissiveColor != nil {
+        emissive := m.emissiveColor.Vector()
+        emissive[3] = 1.0
+        gl.Materialfv(gl.FRONT_AND_BACK, gl.EMISSION, &emissive[0])
+    } else {
+        black := []float32{0, 0, 0, 1}
+        gl.Materialfv(gl.FRONT_AND_BACK, gl.EMISSION, &black[0])
+    }
     
     // Shininess (Ns) - clamp to OpenGL range
     shininess := m.shininess
@@ -137,6 +149,18 @@ func (m *Material) SetDensity(density float32) {
 
 func (m *Material) SetIlluminationModel(model int) {
 	m.illuminationModel = model
+}
+
+func (m *Material) SetEmissiveColor(color *clr.Color) {
+	m.emissiveColor = color
+}
+
+func (m *Material) SetTransmissionFilter(color *clr.Color) {
+	m.transmissionFilter = color
+}
+
+func (m *Material) TextureId() uint32 {
+	return m.textureId
 }
 
 func (m *Material) SetTextureId(textureId uint32) {

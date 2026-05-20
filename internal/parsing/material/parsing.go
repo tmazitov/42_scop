@@ -27,15 +27,18 @@ func (m *mtlParsingProcess) currentMaterial() *rende.Material {
 
 var (
 	mtlParsingActionsDictionary = map[mtlLineType]mtlParsingFunc{
-		mtlNewMaterial: newMaterialHandler, 
-		mtlShininess: shininessHandler,
-		mtlAmbientColor: ambientColorHandler,
-		mtlDiffuseColor: diffuseColorHandler,
-		mtlOpticalDensity: opticalDensityHandler,
-		mtlSpecularColor: specularColorHandler,
-		mtlDissolve:      dissolveHandler,
-		mtlTransparency:  transparencyHandler,
-		mtlIlluminationModel: illuminationModelHandler,
-		mtlDiffuseTextureMap: diffuseTextureMapHandler,
+		mtlNewMaterial:        newMaterialHandler,
+		mtlShininess:          shininessHandler,
+		mtlAmbientColor:       ambientColorHandler,
+		mtlDiffuseColor:       diffuseColorHandler,
+		mtlSpecularColor:      specularColorHandler,
+		mtlEmissiveColor:      emissiveColorHandler,
+		mtlOpticalDensity:     opticalDensityHandler,
+		mtlDissolve:           dissolveHandler,
+		mtlTransparency:       transparencyHandler,
+		mtlTransmissionFilter: transmissionFilterHandler,
+		mtlIlluminationModel:  illuminationModelHandler,
+		mtlDiffuseTextureMap:  diffuseTextureMapHandler,
+		mtlAmbientTextureMap:  ambientTextureMapHandler,
 	}
 )

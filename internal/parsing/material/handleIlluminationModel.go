@@ -9,7 +9,7 @@ import (
 // dissolveHandler parsing dissolve value that has a float type and belongs to the range from 0 to 1.
 func illuminationModelHandler(proc *mtlParsingProcess, args []string) error {
 
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return ErrInvalidIlluminationModelLine
 	}
 
@@ -17,15 +17,16 @@ func illuminationModelHandler(proc *mtlParsingProcess, args []string) error {
 	if material = proc.currentMaterial(); material == nil {
 		return ErrInvalidFile
 	}
-	
+
 	value, err := strconv.Atoi(args[1])
-	
 	if err != nil {
 		return fmt.Errorf("%w : %w", ErrInvalidIlluminationModelLine, err)
 	}
-	
-	if value < 0 || value > 10 {
-		return ErrInvalidIlluminationModelLine
+
+	if value < 0 {
+		value = 0
+	} else if value > 10 {
+		value = 10
 	}
 
 	material.SetIlluminationModel(value)

@@ -12,25 +12,33 @@ const (
     mtlAmbientColor
     mtlDiffuseColor
     mtlSpecularColor
+    mtlEmissiveColor
     mtlOpticalDensity
     mtlDissolve
     mtlTransparency
+    mtlTransmissionFilter
     mtlIlluminationModel
 	mtlDiffuseTextureMap
+	mtlAmbientTextureMap
+	mtlComment
     mtlNone
 )
 
 var mtlLineDictionary = map[string]mtlLineType {
-	"newmtl" : mtlNewMaterial,
-	"Ns"	 : mtlShininess,
-	"Ka"	 : mtlAmbientColor,
-	"Kd"	 : mtlDiffuseColor,
-	"Ks"	 : mtlSpecularColor,
-	"Ni"	 : mtlOpticalDensity,
-	"d"		 : mtlDissolve,
-	"Tr"	 : mtlTransparency,
-	"illum"	 : mtlIlluminationModel,
-	"map_Kd" : mtlDiffuseTextureMap,
+	"newmtl"  : mtlNewMaterial,
+	"Ns"      : mtlShininess,
+	"Ka"      : mtlAmbientColor,
+	"Kd"      : mtlDiffuseColor,
+	"Ks"      : mtlSpecularColor,
+	"Ke"      : mtlEmissiveColor,
+	"Ni"      : mtlOpticalDensity,
+	"d"       : mtlDissolve,
+	"Tr"      : mtlTransparency,
+	"Tf"      : mtlTransmissionFilter,
+	"illum"   : mtlIlluminationModel,
+	"map_Kd"  : mtlDiffuseTextureMap,
+	"map_Ka"  : mtlAmbientTextureMap,
+	"#"       : mtlComment,
 }
 
 func filterMtlFileLine(line string) (mtlLineType, []string) {

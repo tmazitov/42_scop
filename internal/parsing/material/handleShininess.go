@@ -11,8 +11,8 @@ import (
 func shininessHandler(proc *mtlParsingProcess, args []string) error {
 
 	
-	if len(args) != 2 {
-		return ErrInvalidMaterialLine
+	if len(args) < 2 {
+		return ErrInvalidShininessLine
 	}
 
 	var material *rende.Material

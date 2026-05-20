@@ -9,7 +9,7 @@ import (
 // dissolveHandler parsing dissolve value that has a float type and belongs to the range from 0 to 1.
 func dissolveHandler(proc *mtlParsingProcess, args []string) error {
 
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return ErrInvalidDissolveLine
 	}
 

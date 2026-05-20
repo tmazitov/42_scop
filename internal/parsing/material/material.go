@@ -21,6 +21,7 @@ func ParseMtl(filePath string) ([]*rende.Material, error) {
 
     // Create a new scanner to read the file line by line
     scanner := bufio.NewScanner(file)
+    scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
 
     // Loop through the file and read each line
 	var (
@@ -35,9 +36,16 @@ func ParseMtl(filePath string) ([]*rende.Material, error) {
     for scanner.Scan() {
 		counter++
         line := scanner.Text() // Get the line as a string
-		
-		if lineType, lineArgs = filterMtlFileLine(line); lineType == mtlNone{
-			log.Printf("mtl parsing warn : unsupported line '%s' with args %v\n", line, lineArgs)
+		if len(line) == 0 {
+			continue
+		}
+
+		lineType, lineArgs = filterMtlFileLine(line)
+		if lineType == mtlComment {
+			continue
+		}
+		if lineType == mtlNone {
+			log.Printf("mtl parsing warn : unsupported line '%s'\n", line)
 			continue
 		}
 

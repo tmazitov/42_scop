@@ -6,10 +6,10 @@ import (
 	"github.com/tmazitov/42_scop/internal/rende"
 )
 
-func diffuseTextureMapHandler(proc *mtlParsingProcess, args []string) error {
+func ambientTextureMapHandler(proc *mtlParsingProcess, args []string) error {
 
 	if len(args) < 2 {
-		return ErrInvalidDiffuseTextureMapLine
+		return ErrInvalidAmbientTextureMapLine
 	}
 
 	var material *rende.Material
@@ -21,9 +21,12 @@ func diffuseTextureMapHandler(proc *mtlParsingProcess, args []string) error {
 
 	textureID, err := loadTexture(texturePath)
 	if err != nil {
-		return fmt.Errorf("%w : %w", ErrInvalidDiffuseTextureMapLine, err)
+		return fmt.Errorf("%w : %w", ErrInvalidAmbientTextureMapLine, err)
 	}
 
-	material.SetTextureId(textureID)
+	// map_Kd takes priority: only set if no diffuse texture is loaded yet
+	if material.TextureId() == 0 {
+		material.SetTextureId(textureID)
+	}
 	return nil
 }
