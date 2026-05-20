@@ -133,4 +133,3 @@ OBJ_FILE_PATH=resources/airplane.obj
 │   └── window/           # GLFW window wrapper
 └── resources/            # Sample .obj / .mtl / texture files
 ```
-https://luma.com/4wmv4k3s?utm_source=socialmedia
