@@ -1,9 +1,9 @@
 package camera 
 
 import (
-    "github.com/go-gl/mathgl/mgl32"
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
-func (c *Camera) GetViewMatrix() mgl32.Mat4 {
-	return mgl32.LookAtV(c.Position, c.Position.Add(c.Front), c.Up)
+func (c *Camera) GetViewMatrix() geom.Mat4 {
+	return geom.LookAtV(c.Position, c.Position.Add(c.Front), c.Up)
 }

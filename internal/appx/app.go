@@ -5,7 +5,6 @@ import (
 	// "github.com/go-gl/glfw/v3.2/glfw"
 	"log"
 
-	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/appx/camera"
 	"github.com/tmazitov/42_scop/internal/appx/controller"
 	"github.com/tmazitov/42_scop/internal/appx/window"
@@ -44,6 +43,11 @@ func initOpenGL() error {
 	return nil
 }
 
+type Config struct {
+	Window *window.WindowOptions
+	RotationSpeed float32
+}
+
 func NewApp(config *Config) (*App, error) {
 	win, err := window.NewWindow(config.Window)
 	if err != nil {
@@ -58,10 +62,7 @@ func NewApp(config *Config) (*App, error) {
 		config: config,
 		window: win,
 		state:  NewState(),
-		camera: camera.NewCamera(
-			mgl32.Vec3{
-				0, 0, 0,
-			}).
+		camera: camera.NewCamera(geom.Vec3{0, 0, 0}).
 			SetMouseSensitivity(0.1).
 			SetVisionAngle(0, -90),
 		objects:    nil,
@@ -119,16 +120,8 @@ func (a *App) AddObjects(objs ...*rende.Object) {
 	// 	y += 28
 	// }
 
-	pos := calculateCameraPosition(shape)
-	speed := calculateCameraSpeed(shape)
-
-	a.camera.
-		SetMovementSpeed(speed).
-		SetPosition(mgl32.Vec3{
-			pos.X,
-			pos.Y,
-			pos.Z,
-		})
+	a.camera.SetMovementSpeed(shape)
+	a.camera.SetPosition(shape)
 }
 
 func (a *App) Objects() []*rende.Object {

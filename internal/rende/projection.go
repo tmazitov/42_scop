@@ -1,12 +1,12 @@
 package rende 
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
-func MakeProjection(screenSize ScreenSize, dimension, angle float32) mgl32.Mat4 {
-	return mgl32.Perspective(
-		mgl32.DegToRad(angle),
+func MakeProjection(screenSize ScreenSize, dimension, angle float32) geom.Mat4 {
+	return geom.Perspective(
+		angle,
 		screenSize.Width/screenSize.Height,
 		0.1,
 		dimension * 10,

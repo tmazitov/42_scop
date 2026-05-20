@@ -3,8 +3,8 @@ package appx
 import (
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/mathgl/mgl32"
 	"github.com/tmazitov/42_scop/internal/rende"
+	"github.com/tmazitov/42_scop/internal/geom"
 )
 
 func (a *App) Draw() {
@@ -28,7 +28,7 @@ func (a *App) Draw() {
     glfw.PollEvents()
 }
 
-func (a *App) DrawScene(projection mgl32.Mat4) {
+func (a *App) DrawScene(projection geom.Mat4) {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrixf(&projection[0])
@@ -44,7 +44,7 @@ func (a *App) DrawScene(projection mgl32.Mat4) {
 
 	for _, obj := range a.Objects() {
 		gl.PushMatrix()
-		model := mgl32.Ident4()
+		model := geom.IdentityMat4()
 		gl.MultMatrixf(&model[0])
 
 		obj.Draw(a.screenSize)

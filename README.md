@@ -47,7 +47,6 @@ sudo dnf install mesa-libGL-devel libXi-devel libXcursor-devel libXrandr-devel l
 |---|---|
 | `github.com/go-gl/gl` | OpenGL bindings |
 | `github.com/go-gl/glfw` | Window and input handling |
-| `github.com/go-gl/mathgl` | Matrix / vector math |
 | `github.com/joho/godotenv` | `.env` config loading |
 | `golang.org/x/image` | Texture image decoding |
 
