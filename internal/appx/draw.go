@@ -47,7 +47,7 @@ func (a *App) DrawScene(projection geom.Mat4) {
 		model := geom.IdentityMat4()
 		gl.MultMatrixf(&model[0])
 
-		obj.Draw(a.screenSize)
+		obj.Draw(a.screenSize, a.state.TextureBlend)
 
 		gl.PopMatrix()
 	}

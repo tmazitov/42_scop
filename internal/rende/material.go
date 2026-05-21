@@ -53,39 +53,31 @@ func (m *Material) Range() (int, int) {
     return m.startIndex, m.count
 }
 
-func (m *Material) Apply() {
+// Apply sets up material properties. blend controls texture visibility:
+// 0 = colors only, 1 = full texture, between = texture fading in at that alpha.
+func (m *Material) Apply(blend float32) {
 
-    if m.textureId != 0 {
-        gl.Enable(gl.TEXTURE_2D)
-        gl.BindTexture(gl.TEXTURE_2D, m.textureId)
-        
-        // Texture combines with material color
-        gl.TexEnvi(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.MODULATE)
-    } else {
-        gl.Disable(gl.TEXTURE_2D)
-    }
-    
     // Ambient Color (Ka)
     if m.ambientColor != nil {
         ambient := m.ambientColor.Vector()
         gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, &ambient[0])
     }
 
-    // Diffuse Color (Kd) — alpha comes from dissolve, not from the color itself
+    // Diffuse Color (Kd)
     if m.diffuseColor != nil {
         diffuse := m.diffuseColor.Vector()
         diffuse[3] = m.dissolve
         gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, &diffuse[0])
         gl.Color4fv(&diffuse[0])
     }
-    
+
     // Specular Color (Ks)
     if m.specularColor != nil {
         specular := m.specularColor.Vector()
         gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, &specular[0])
     }
 
-    // Emissive Color (Ke) — reset to black if not set to avoid bleed between materials
+    // Emissive Color (Ke)
     if m.emissiveColor != nil {
         emissive := m.emissiveColor.Vector()
         emissive[3] = 1.0
@@ -94,28 +86,38 @@ func (m *Material) Apply() {
         black := []float32{0, 0, 0, 1}
         gl.Materialfv(gl.FRONT_AND_BACK, gl.EMISSION, &black[0])
     }
-    
-    // Shininess (Ns) - clamp to OpenGL range
+
+    // Shininess (Ns)
     shininess := m.shininess
     if shininess > 128.0 {
         shininess = 128.0
     }
     gl.Materialf(gl.FRONT_AND_BACK, gl.SHININESS, shininess)
-    
-    // Transparency handling
-    if m.dissolve < 1.0 {
-        gl.Enable(gl.BLEND)
-        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-    } else {
-        gl.Disable(gl.BLEND)
-    }
-    
+
     // Illumination model
     if m.illuminationModel == 0 {
         gl.Disable(gl.LIGHTING)
     } else {
         gl.Enable(gl.LIGHTING)
         gl.Enable(gl.LIGHT0)
+    }
+
+    // Texture
+    if m.textureId != 0 && blend > 0 {
+        gl.Enable(gl.TEXTURE_2D)
+        gl.BindTexture(gl.TEXTURE_2D, m.textureId)
+        gl.TexEnvi(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.MODULATE)
+        gl.Color4f(1, 1, 1, blend)
+        gl.Enable(gl.BLEND)
+        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    } else {
+        gl.Disable(gl.TEXTURE_2D)
+        if m.dissolve < 1.0 {
+            gl.Enable(gl.BLEND)
+            gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        } else {
+            gl.Disable(gl.BLEND)
+        }
     }
 }
 

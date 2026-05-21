@@ -90,6 +90,19 @@ func (a *App) Process() {
 			obj.Rotate(0, a.config.RotationSpeed, 0)
 		}
 	}
+
+	const blendStep = float32(0.02)
+	if a.state.IsTextureEnabled && a.state.TextureBlend < 1.0 {
+		a.state.TextureBlend += blendStep
+		if a.state.TextureBlend > 1.0 {
+			a.state.TextureBlend = 1.0
+		}
+	} else if !a.state.IsTextureEnabled && a.state.TextureBlend > 0.0 {
+		a.state.TextureBlend -= blendStep
+		if a.state.TextureBlend < 0.0 {
+			a.state.TextureBlend = 0.0
+		}
+	}
 }
 
 func (a *App) Camera() *camera.Camera {

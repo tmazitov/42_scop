@@ -61,24 +61,49 @@ func (o *Object) Rotate(angleX, angleY, angleZ float32) {
 	o.vao = 0
 }
   
-func (o *Object) Draw(screenSize ScreenSize) {
+func (o *Object) Draw(screenSize ScreenSize, textureBlend float32) {
 
 	gl.BindVertexArray(o.VAO(screenSize))
-	
-	// Apply material before drawing
-	if materials := o.materials; len(materials) != 0 {
-		for _, material := range o.materials {
-			material.Apply()
 
-			materialRangeStart, materialRangeLength := material.Range()
-			offset := uintptr(materialRangeStart * 4)  // 4 bytes per uint32
-            gl.DrawElements(gl.TRIANGLES, int32(materialRangeLength), gl.UNSIGNED_INT, unsafe.Pointer(offset))
-		}
-	} else {
+	if len(o.materials) == 0 {
 		gl.Color3f(1.0, 1.0, 1.0)
 		gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
+		return
 	}
-	
+
+	// Pass 1: solid material colors (always visible under the texture)
+	if textureBlend < 1.0 {
+		for _, material := range o.materials {
+			start, count := material.Range()
+			material.Apply(0)
+			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
+		}
+	}
+
+	// Pass 2: texture fading in at textureBlend alpha (depth write off to avoid z-fight)
+	if textureBlend > 0 {
+		gl.DepthMask(false)
+		for _, material := range o.materials {
+			if material.TextureId() == 0 {
+				continue
+			}
+			start, count := material.Range()
+			material.Apply(textureBlend)
+			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
+		}
+		gl.DepthMask(true)
+	}
+
+	// Materials with no texture that were skipped when blend == 1
+	if textureBlend >= 1.0 {
+		for _, material := range o.materials {
+			if material.TextureId() != 0 {
+				start, count := material.Range()
+				material.Apply(1.0)
+				gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
+			}
+		}
+	}
 }
 
 

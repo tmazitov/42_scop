@@ -33,23 +33,34 @@ func (a *App) SetupButtons() {
 		}),
 
 		// Toggle Rotation button
-
-		// Toggle Vertex/Fill mode button
-		ui.NewButton().	
+		ui.NewButton().
 		SetPos(&geom.Pos{X: 10, Y: 60, Z: 1}).
 		SetSize(40, 120).
 		SetColor(enabledColor).
 		SetText("Enable Rotation").
-		SetOnClick(func (instance *ui.Button, xpos, ypos float32) error {
-			
+		SetOnClick(func(instance *ui.Button, xpos, ypos float32) error {
 			a.state.IsRotationEnabled = !a.state.IsRotationEnabled
-
 			if a.state.IsRotationEnabled {
 				instance.SetColor(disabledColor).SetText("Disable Rotation")
 			} else {
 				instance.SetColor(enabledColor).SetText("Enable Rotation")
 			}
+			return nil
+		}),
 
+		// Toggle Texture button
+		ui.NewButton().
+		SetPos(&geom.Pos{X: 10, Y: 110, Z: 1}).
+		SetSize(40, 120).
+		SetColor(enabledColor).
+		SetText("Show Texture").
+		SetOnClick(func(instance *ui.Button, xpos, ypos float32) error {
+			a.state.IsTextureEnabled = !a.state.IsTextureEnabled
+			if a.state.IsTextureEnabled {
+				instance.SetColor(disabledColor).SetText("Hide Texture")
+			} else {
+				instance.SetColor(enabledColor).SetText("Show Texture")
+			}
 			return nil
 		}),
 	}

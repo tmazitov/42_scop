@@ -1,6 +1,8 @@
 module github.com/tmazitov/42_scop
 
-go 1.18
+go 1.24.0
+
+toolchain go1.24.4
 
 require (
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71
