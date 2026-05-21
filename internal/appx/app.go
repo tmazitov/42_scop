@@ -128,6 +128,14 @@ func (a *App) TranslateSelectedObject(dx, dy, dz float32) {
 	obj.Translate(dx, dy, dz)
 }
 
+func (a *App) RotateSelectedObject(angleX, angleY, angleZ float32) {
+	obj := a.SelectedObject()
+	if obj == nil {
+		return
+	}
+	obj.Rotate(angleX, angleY, angleZ)
+}
+
 // Rest of your methods remain the same...
 func (a *App) Process() {
 	a.controller.ProcessInput(a.window.Core(), a.camera)

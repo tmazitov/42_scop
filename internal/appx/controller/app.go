@@ -13,4 +13,5 @@ type App interface {
 	Window() *window.Window
 	ScreenSize() rende.ScreenSize
 	TranslateSelectedObject(dx, dy, dz float32)
+	RotateSelectedObject(angleX, angleY, angleZ float32)
 }

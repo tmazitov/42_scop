@@ -47,6 +47,11 @@ func (c *Controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float6
 		dz := (right.Z()*xoffset + up.Z()*yoffset) * scale
 		c.app.TranslateSelectedObject(dx, dy, dz)
 	}
+
+	if w.GetMouseButton(glfw.MouseButtonMiddle) == glfw.Press {
+		sensitivity := float32(0.4)
+		c.app.RotateSelectedObject(-yoffset*sensitivity, xoffset*sensitivity, 0)
+	}
 }
 
 func (c *Controller) scrollCallback(w *glfw.Window, xoffset float64, yoffset float64) {
