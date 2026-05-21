@@ -71,37 +71,35 @@ func (o *Object) Draw(screenSize ScreenSize, textureBlend float32) {
 		return
 	}
 
-	// Pass 1: solid material colors (always visible under the texture)
 	if textureBlend < 1.0 {
+		// Pass 1: solid material colors
 		for _, material := range o.materials {
 			start, count := material.Range()
 			material.Apply(0)
 			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
 		}
-	}
 
-	// Pass 2: texture fading in at textureBlend alpha (depth write off to avoid z-fight)
-	if textureBlend > 0 {
-		gl.DepthMask(false)
-		for _, material := range o.materials {
-			if material.TextureId() == 0 {
-				continue
-			}
-			start, count := material.Range()
-			material.Apply(textureBlend)
-			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
-		}
-		gl.DepthMask(true)
-	}
-
-	// Materials with no texture that were skipped when blend == 1
-	if textureBlend >= 1.0 {
-		for _, material := range o.materials {
-			if material.TextureId() != 0 {
+		// Pass 2: texture fading in — LEQUAL allows same-depth overdraw, no depth write
+		if textureBlend > 0 {
+			gl.DepthFunc(gl.LEQUAL)
+			gl.DepthMask(false)
+			for _, material := range o.materials {
+				if material.TextureId() == 0 {
+					continue
+				}
 				start, count := material.Range()
-				material.Apply(1.0)
+				material.Apply(textureBlend)
 				gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
 			}
+			gl.DepthMask(true)
+			gl.DepthFunc(gl.LESS)
+		}
+	} else {
+		// blend == 1: single pass, full texture
+		for _, material := range o.materials {
+			start, count := material.Range()
+			material.Apply(1.0)
+			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
 		}
 	}
 }
