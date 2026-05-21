@@ -92,6 +92,7 @@ func (o *Object) Draw(screenSize ScreenSize, textureBlend float32) {
 	if len(o.materials) == 0 {
 		gl.Color3f(1.0, 1.0, 1.0)
 		gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
+		o.drawEdges(textureBlend)
 		return
 	}
 
@@ -126,6 +127,38 @@ func (o *Object) Draw(screenSize ScreenSize, textureBlend float32) {
 			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
 		}
 	}
+
+	o.drawEdges(textureBlend)
+}
+
+func (o *Object) drawEdges(textureBlend float32) {
+	alpha := (1.0 - textureBlend) * 0.55
+	if alpha <= 0 {
+		return
+	}
+
+	gl.Disable(gl.LIGHTING)
+	gl.Disable(gl.TEXTURE_2D)
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	gl.Color4f(0.0, 0.0, 0.0, alpha)
+
+	gl.Enable(gl.POLYGON_OFFSET_LINE)
+	gl.PolygonOffset(-1.0, -1.0)
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+
+	if len(o.materials) == 0 {
+		gl.DrawElements(gl.TRIANGLES, int32(o.IndicesCount()), gl.UNSIGNED_INT, nil)
+	} else {
+		for _, material := range o.materials {
+			start, count := material.Range()
+			gl.DrawElements(gl.TRIANGLES, int32(count), gl.UNSIGNED_INT, unsafe.Pointer(uintptr(start*4)))
+		}
+	}
+
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+	gl.Disable(gl.POLYGON_OFFSET_LINE)
+	gl.PolygonOffset(0, 0)
 }
 
 

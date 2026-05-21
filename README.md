@@ -10,22 +10,43 @@ of the 42 curriculum by [tmazitov](https://github.com/tmazitov).
 ## Features
 
 - Parse and render `.obj` / `.mtl` files with multiple objects and materials
-- Free camera navigation (WASD + mouse look)
-- Toggle between fill and vertex (wireframe) mode
+- Free camera navigation (WASD + mouse look, zoom)
+- Toggle between fill and wireframe mode
 - Auto-rotation of the model
+- Manual object rotation and translation via mouse
+- Smooth texture fade-in / fade-out animation
+- Polygon edges visible when no texture is applied
+- Blender-style horizontal grid for spatial reference
+- Selected object info overlay (name + world coordinates)
 - Automatic camera positioning based on model size
 
 ## Controls
 
+### Camera
+
 | Input | Action |
 |---|---|
-| `W / A / S / D` | Move camera forward / left / backward / right |
-| `Space` | Move camera up |
-| `Left Shift` | Move camera down |
-| Mouse drag | Look around |
+| `W / A / S / D` | Move forward / left / backward / right |
+| `Space` | Move up |
+| `Left Shift` | Move down |
+| `Left mouse` + drag | Look around |
+| `Scroll wheel` | Zoom in / out |
 | `Escape` | Exit |
-| **Vertex Mode** button | Toggle wireframe / fill rendering |
-| **Enable Rotation** button | Toggle auto-rotation |
+
+### Object
+
+| Input | Action |
+|---|---|
+| `Right mouse` + drag | Translate selected object |
+| `Middle mouse` + drag | Rotate selected object |
+
+### UI buttons
+
+| Button | Action |
+|---|---|
+| **Vertex Mode** | Toggle wireframe / fill rendering |
+| **Enable Rotation** | Toggle auto-rotation |
+| **Enable Texture** | Toggle texture with smooth transition |
 
 ## Dependencies
 
