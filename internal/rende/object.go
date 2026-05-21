@@ -8,12 +8,36 @@ import (
 )
 
 type Object struct {
-	name 	  string
-	shape 	  []*geom.Vertex
-	indices   []uint32
-	vao 	  uint32
-	materials []*Material
-	pivot     geom.Pos
+	name        string
+	shape       []*geom.Vertex
+	indices     []uint32
+	vao         uint32
+	materials   []*Material
+	pivot       geom.Pos
+	translation geom.Pos
+}
+
+func (o *Object) Translate(dx, dy, dz float32) {
+	for _, v := range o.shape {
+		v.Pos.X += dx
+		v.Pos.Y += dy
+		v.Pos.Z += dz
+	}
+	o.pivot.X += dx
+	o.pivot.Y += dy
+	o.pivot.Z += dz
+	o.translation.X += dx
+	o.translation.Y += dy
+	o.translation.Z += dz
+	o.vao = 0
+}
+
+func (o *Object) Translation() geom.Pos {
+	return o.translation
+}
+
+func (o *Object) Pivot() geom.Pos {
+	return o.pivot
 }
 
 func NewObject(name string) *Object {

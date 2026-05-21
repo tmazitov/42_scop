@@ -1,10 +1,10 @@
 package appx
 
 import (
-	"github.com/go-gl/gl/v2.1/gl"
-	// "github.com/go-gl/glfw/v3.2/glfw"
+	"fmt"
 	"log"
 
+	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/tmazitov/42_scop/internal/appx/camera"
 	"github.com/tmazitov/42_scop/internal/appx/controller"
 	"github.com/tmazitov/42_scop/internal/appx/window"
@@ -14,14 +14,16 @@ import (
 )
 
 type App struct {
-	config     *Config
-	controller *controller.Controller
-	window     *window.Window
-	camera     *camera.Camera
-	state      *State
-	ui         *ui.UI
-	objects    []*rende.Object
-	screenSize rende.ScreenSize
+	config          *Config
+	controller      *controller.Controller
+	window          *window.Window
+	camera          *camera.Camera
+	state           *State
+	ui              *ui.UI
+	objects         []*rende.Object
+	grid            *rende.Grid
+	screenSize      rende.ScreenSize
+	objectInfoTexts [4]*ui.Text
 }
 
 // initOpenGL initializes OpenGL (no shaders needed)
@@ -77,8 +79,53 @@ func NewApp(config *Config) (*App, error) {
 	app.controller = controller.NewController(app)
 	app.controller.BindMouseControl()
 	app.SetupButtons()
+	app.setupObjectInfoTexts()
 
 	return app, nil
+}
+
+func (a *App) setupObjectInfoTexts() {
+	x := a.screenSize.Width - 210
+	for i := range a.objectInfoTexts {
+		a.objectInfoTexts[i] = ui.NewText("", x, float32(10+i*16))
+	}
+}
+
+func (a *App) updateObjectInfo() {
+	obj := a.SelectedObject()
+	if obj == nil {
+		return
+	}
+	t := obj.Translation()
+	p := obj.Pivot()
+	lines := [4]string{
+		fmt.Sprintf("Object: %s", obj.Name()),
+		fmt.Sprintf("X: %.2f", p.X+t.X),
+		fmt.Sprintf("Y: %.2f", p.Y+t.Y),
+		fmt.Sprintf("Z: %.2f", p.Z+t.Z),
+	}
+	for i, line := range lines {
+		a.objectInfoTexts[i].SetText(line)
+	}
+}
+
+func (a *App) SelectedObject() *rende.Object {
+	if len(a.objects) == 0 {
+		return nil
+	}
+	idx := a.state.SelectedObjectIdx
+	if idx < 0 || idx >= len(a.objects) {
+		return nil
+	}
+	return a.objects[idx]
+}
+
+func (a *App) TranslateSelectedObject(dx, dy, dz float32) {
+	obj := a.SelectedObject()
+	if obj == nil {
+		return
+	}
+	obj.Translate(dx, dy, dz)
 }
 
 // Rest of your methods remain the same...
@@ -135,6 +182,7 @@ func (a *App) AddObjects(objs ...*rende.Object) {
 
 	a.camera.SetMovementSpeed(shape)
 	a.camera.SetPosition(shape)
+	a.grid = rende.NewGrid(shape)
 }
 
 func (a *App) Objects() []*rende.Object {

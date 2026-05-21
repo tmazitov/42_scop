@@ -20,63 +20,56 @@ type Text struct {
 	pos		  geom.Pos
 }
 
-func NewText(text string, x, y float32) *Text {
-	// Measure text width automatically
+func uploadTextTexture(text string) (id uint32, w, h int32) {
 	face := basicfont.Face7x13
 	width := font.MeasureString(face, text).Ceil()
-	height := 16 // Fixed height for basicfont
+	if width == 0 {
+		return 0, 0, 0
+	}
+	height := 16
 
-	// Create RGBA image
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-
-	// Fill with transparent background
 	draw.Draw(img, img.Bounds(), image.Transparent, image.Point{}, draw.Src)
-
-	// Draw text onto image
-	d := &font.Drawer{
+	(&font.Drawer{
 		Dst:  img,
 		Src:  image.NewUniform(color.White),
 		Face: face,
-		Dot:  fixed.P(0, 13), // baseline position
-	}
-	d.DrawString(text)
+		Dot:  fixed.P(0, 13),
+	}).DrawString(text)
 
-	// Create OpenGL texture from image
-	var textureID uint32
-	gl.GenTextures(1, &textureID)
-	gl.BindTexture(gl.TEXTURE_2D, textureID)
-
+	gl.GenTextures(1, &id)
+	gl.BindTexture(gl.TEXTURE_2D, id)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-
-	gl.TexImage2D(
-		gl.TEXTURE_2D,
-		0,
-		gl.RGBA,
-		int32(width),
-		int32(height),
-		0,
-		gl.RGBA,
-		gl.UNSIGNED_BYTE,
-		gl.Ptr(img.Pix),
-	)
-
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, int32(width), int32(height), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(img.Pix))
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 
+	return id, int32(width), int32(height)
+}
+
+func NewText(text string, x, y float32) *Text {
+	id, w, h := uploadTextTexture(text)
 	return &Text{
-		textureID: textureID,
-		width:     int32(width),
-		height:    int32(height),
-		pos:	   geom.Pos{
-			X: x,
-			Y: y,
-		},
+		textureID: id,
+		width:     w,
+		height:    h,
+		pos:       geom.Pos{X: x, Y: y},
 	}
 }
 
+func (t *Text) SetText(text string) {
+	if t.textureID != 0 {
+		gl.DeleteTextures(1, &t.textureID)
+	}
+	t.textureID, t.width, t.height = uploadTextTexture(text)
+}
+
 func (b *Text) Draw() {
+	if b.textureID == 0 {
+		return
+	}
 	w := float32(b.width)
 	h := float32(b.height)
 

@@ -12,4 +12,5 @@ type App interface {
 	UI() *ui.UI
 	Window() *window.Window
 	ScreenSize() rende.ScreenSize
+	TranslateSelectedObject(dx, dy, dz float32)
 }

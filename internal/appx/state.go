@@ -5,6 +5,7 @@ type State struct {
 	IsRotationEnabled bool
 	IsTextureEnabled  bool
 	TextureBlend      float32
+	SelectedObjectIdx int
 }
 
 func NewState() *State {
@@ -13,5 +14,6 @@ func NewState() *State {
 		IsRotationEnabled: false,
 		IsTextureEnabled:  false,
 		TextureBlend:      0,
+		SelectedObjectIdx: 0,
 	}
 }

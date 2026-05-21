@@ -3,8 +3,8 @@ package appx
 import (
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/tmazitov/42_scop/internal/rende"
 	"github.com/tmazitov/42_scop/internal/geom"
+	"github.com/tmazitov/42_scop/internal/rende"
 )
 
 func (a *App) Draw() {
@@ -19,9 +19,10 @@ func (a *App) Draw() {
 	}
 
     a.DrawScene(projection)
-     
+
 	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 
+	a.updateObjectInfo()
     a.DrawUI()
     
     a.Window().Core().SwapBuffers()
@@ -42,13 +43,13 @@ func (a *App) DrawScene(projection geom.Mat4) {
     lightPos := []float32{10.0, 10.0, 10.0, 1.0}
     gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPos[0])
 
+	if a.grid != nil {
+		a.grid.Draw()
+	}
+
 	for _, obj := range a.Objects() {
 		gl.PushMatrix()
-		model := geom.IdentityMat4()
-		gl.MultMatrixf(&model[0])
-
 		obj.Draw(a.screenSize, a.state.TextureBlend)
-
 		gl.PopMatrix()
 	}
 
@@ -110,7 +111,10 @@ func (a *App) DrawUI() {
     gl.LoadIdentity()
     
 	a.ui.Draw()
-    
+	for _, t := range a.objectInfoTexts {
+		t.Draw()
+	}
+
     // Re-enable depth test for next frame's 3D rendering
     gl.Enable(gl.DEPTH_TEST)
 }

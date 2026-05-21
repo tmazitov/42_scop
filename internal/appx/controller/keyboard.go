@@ -5,6 +5,12 @@ import (
 	"github.com/tmazitov/42_scop/internal/appx/camera"
 )
 
+func (c *Controller) keyCallback(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if key == glfw.KeyLeftControl || key == glfw.KeyRightControl {
+		c.ctrlHeld = action != glfw.Release
+	}
+}
+
 // Process keyboard input for camera movement
 func (c *Controller) ProcessInput(window *glfw.Window, camera *camera.Camera) {
 	// Update delta time

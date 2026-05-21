@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
-	// "fmt"
 	"log"
 )
 
@@ -30,13 +29,23 @@ func (c *Controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float6
 	}
 
 	xoffset := float32(xpos - c.lastX)
-	yoffset := float32(c.lastY - ypos) // reversed: y ranges bottom to top
+	yoffset := float32(c.lastY - ypos)
 
 	c.lastX = xpos
 	c.lastY = ypos
 
 	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
 		c.app.Camera().ProcessMouseMovement(xoffset, yoffset)
+	}
+
+	if w.GetMouseButton(glfw.MouseButtonRight) == glfw.Press {
+		scale := c.app.Camera().MovementSpeed * 0.005
+		right := c.app.Camera().Right
+		up := c.app.Camera().Up
+		dx := (right.X()*xoffset + up.X()*yoffset) * scale
+		dy := (right.Y()*xoffset + up.Y()*yoffset) * scale
+		dz := (right.Z()*xoffset + up.Z()*yoffset) * scale
+		c.app.TranslateSelectedObject(dx, dy, dz)
 	}
 }
 
