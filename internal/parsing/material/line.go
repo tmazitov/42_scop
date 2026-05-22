@@ -20,6 +20,9 @@ const (
     mtlIlluminationModel
 	mtlDiffuseTextureMap
 	mtlAmbientTextureMap
+	mtlSpecularTextureMap
+	mtlShininessTextureMap
+	mtlDissolveTextureMap
 	mtlComment
     mtlNone
 )
@@ -38,6 +41,9 @@ var mtlLineDictionary = map[string]mtlLineType {
 	"illum"   : mtlIlluminationModel,
 	"map_Kd"  : mtlDiffuseTextureMap,
 	"map_Ka"  : mtlAmbientTextureMap,
+	"map_Ks"  : mtlSpecularTextureMap,
+	"map_Ns"  : mtlShininessTextureMap,
+	"map_d"   : mtlDissolveTextureMap,
 	"#"       : mtlComment,
 }
 

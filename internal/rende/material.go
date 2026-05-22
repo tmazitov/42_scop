@@ -15,8 +15,11 @@ type Material struct {
 	specularColor 		*clr.Color
 	emissiveColor		*clr.Color
 	transmissionFilter	*clr.Color
-	illuminationModel	int
-	textureId			uint32
+	illuminationModel	    int
+	textureId			    uint32
+	specularTextureId	    uint32
+	shininessTextureId	    uint32
+	dissolveTextureId	    uint32
     startIndex          int
     count               int
 }
@@ -169,9 +172,45 @@ func (m *Material) SetTextureId(textureId uint32) {
 	m.textureId = textureId
 }
 
+func (m *Material) SpecularTextureId() uint32 {
+	return m.specularTextureId
+}
+
+func (m *Material) SetSpecularTextureId(id uint32) {
+	m.specularTextureId = id
+}
+
+func (m *Material) ShininessTextureId() uint32 {
+	return m.shininessTextureId
+}
+
+func (m *Material) SetShininessTextureId(id uint32) {
+	m.shininessTextureId = id
+}
+
+func (m *Material) DissolveTextureId() uint32 {
+	return m.dissolveTextureId
+}
+
+func (m *Material) SetDissolveTextureId(id uint32) {
+	m.dissolveTextureId = id
+}
+
 func (m *Material) Cleanup() {
     if m.textureId != 0 {
         gl.DeleteTextures(1, &m.textureId)
         m.textureId = 0
+    }
+    if m.specularTextureId != 0 {
+        gl.DeleteTextures(1, &m.specularTextureId)
+        m.specularTextureId = 0
+    }
+    if m.shininessTextureId != 0 {
+        gl.DeleteTextures(1, &m.shininessTextureId)
+        m.shininessTextureId = 0
+    }
+    if m.dissolveTextureId != 0 {
+        gl.DeleteTextures(1, &m.dissolveTextureId)
+        m.dissolveTextureId = 0
     }
 }

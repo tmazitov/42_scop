@@ -38,7 +38,10 @@ var (
 		mtlTransparency:       transparencyHandler,
 		mtlTransmissionFilter: transmissionFilterHandler,
 		mtlIlluminationModel:  illuminationModelHandler,
-		mtlDiffuseTextureMap:  diffuseTextureMapHandler,
-		mtlAmbientTextureMap:  ambientTextureMapHandler,
+		mtlDiffuseTextureMap:   diffuseTextureMapHandler,
+		mtlAmbientTextureMap:   ambientTextureMapHandler,
+		mtlSpecularTextureMap:  specularTextureMapHandler,
+		mtlShininessTextureMap: shininessTextureMapHandler,
+		mtlDissolveTextureMap:  dissolveTextureMapHandler,
 	}
 )
