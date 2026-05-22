@@ -23,7 +23,7 @@ type App struct {
 	objects         []*rende.Object
 	grid            *rende.Grid
 	screenSize      rende.ScreenSize
-	objectInfoTexts [4]*ui.Text
+	objectInfoTexts [6]*ui.Text
 	sceneDimension  float32
 }
 
@@ -99,11 +99,13 @@ func (a *App) updateObjectInfo() {
 	}
 	t := obj.Translation()
 	p := obj.Pivot()
-	lines := [4]string{
+	lines := [6]string{
 		fmt.Sprintf("Object: %s", obj.Name()),
 		fmt.Sprintf("X: %.2f", p.X+t.X),
 		fmt.Sprintf("Y: %.2f", p.Y+t.Y),
 		fmt.Sprintf("Z: %.2f", p.Z+t.Z),
+		fmt.Sprintf("Vertices: %d", obj.NodeCount()),
+		fmt.Sprintf("Polygons: %d", obj.IndicesCount()/3),
 	}
 	for i, line := range lines {
 		a.objectInfoTexts[i].SetText(line)
