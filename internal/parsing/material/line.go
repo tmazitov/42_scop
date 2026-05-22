@@ -44,6 +44,21 @@ var mtlLineDictionary = map[string]mtlLineType {
 	"map_Ks"  : mtlSpecularTextureMap,
 	"map_Ns"  : mtlShininessTextureMap,
 	"map_d"   : mtlDissolveTextureMap,
+	// PBR extensions — not applicable in fixed-function GL, silently ignored
+	"Pr"      : mtlComment,
+	"Pm"      : mtlComment,
+	"Ps"      : mtlComment,
+	"Pc"      : mtlComment,
+	"Pcr"     : mtlComment,
+	"Pds"     : mtlComment,
+	"Pl"      : mtlComment,
+	"aniso"   : mtlComment,
+	"anisor"  : mtlComment,
+	"map_Pr"  : mtlComment,
+	"map_Pm"  : mtlComment,
+	"map_Ps"  : mtlComment,
+	"map_Ke"  : mtlComment,
+	"norm"    : mtlComment,
 	"#"       : mtlComment,
 }
 
