@@ -24,6 +24,7 @@ type App struct {
 	grid            *rende.Grid
 	screenSize      rende.ScreenSize
 	objectInfoTexts [4]*ui.Text
+	sceneDimension  float32
 }
 
 // initOpenGL initializes OpenGL (no shaders needed)
@@ -191,6 +192,29 @@ func (a *App) AddObjects(objs ...*rende.Object) {
 	a.camera.SetMovementSpeed(shape)
 	a.camera.SetPosition(shape)
 	a.grid = rende.NewGrid(shape)
+	a.sceneDimension = sceneDimension(shape)
+}
+
+func sceneDimension(vertices []*geom.Vertex) float32 {
+	minX, maxX := vertices[0].Pos.X, vertices[0].Pos.X
+	minY, maxY := vertices[0].Pos.Y, vertices[0].Pos.Y
+	minZ, maxZ := vertices[0].Pos.Z, vertices[0].Pos.Z
+	for _, v := range vertices {
+		if v.Pos.X < minX { minX = v.Pos.X }
+		if v.Pos.X > maxX { maxX = v.Pos.X }
+		if v.Pos.Y < minY { minY = v.Pos.Y }
+		if v.Pos.Y > maxY { maxY = v.Pos.Y }
+		if v.Pos.Z < minZ { minZ = v.Pos.Z }
+		if v.Pos.Z > maxZ { maxZ = v.Pos.Z }
+	}
+	dx := maxX - minX
+	dy := maxY - minY
+	dz := maxZ - minZ
+	maxDim := dx
+	if dy > maxDim { maxDim = dy }
+	if dz > maxDim { maxDim = dz }
+	if maxDim < 100 { maxDim = 100 }
+	return maxDim
 }
 
 func (a *App) Objects() []*rende.Object {

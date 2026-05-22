@@ -165,3 +165,4 @@ The `resources/` directory includes several `.obj` files you can use right away:
 - [Scratchapixel — Rasterization](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation) — from-scratch explanation of the rendering pipeline
 - [Paul Bourke — 3D geometry](http://paulbourke.net/geometry/) — articles on normals, triangulation, and mesh processing
 - [Real-Time Rendering (book)](https://www.realtimerendering.com/) — comprehensive reference for graphics algorithms
+- Claude.ai — 3d graphics learning, hypothesis testing and support in coding for non-essential parts (ui, env variables and etc.)

@@ -107,7 +107,7 @@ func (m *Material) Apply(blend float32) {
         gl.Enable(gl.TEXTURE_2D)
         gl.BindTexture(gl.TEXTURE_2D, m.textureId)
         gl.TexEnvi(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.MODULATE)
-        gl.Color4f(1, 1, 1, blend)
+        gl.Color4f(1, 1, 1, blend*m.dissolve)
         gl.Enable(gl.BLEND)
         gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     } else {

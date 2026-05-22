@@ -8,6 +8,8 @@ type Controller struct {
 	deltaTime  float32
 	lastFrame  float32
 	ctrlHeld   bool
+	leftPressX float64
+	leftPressY float64
 }
 
 func NewController(app App) *Controller {

@@ -7,16 +7,35 @@ import (
 
 func (c *Controller) mouseClickCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
 
-	if button == glfw.MouseButtonLeft && action == glfw.Release {
+	if button == glfw.MouseButtonRight && action == glfw.Press {
 		xpos, ypos := window.GetCursorPos()
-	
-		pressedButton := c.app.UI().IsPressed(float32(xpos), float32(ypos))
-		if pressedButton == nil {
-			return ;
+		c.app.SelectObjectAt(float32(xpos), float32(ypos))
+		return
+	}
+
+	if button == glfw.MouseButtonLeft {
+		xpos, ypos := window.GetCursorPos()
+		if action == glfw.Press {
+			c.leftPressX = xpos
+			c.leftPressY = ypos
+			return
 		}
-		err := pressedButton.HandleClick(float32(xpos), float32(ypos))
-		if err != nil {
-			log.Println("ui pressed error : ", err)
+		if action == glfw.Release {
+			dx := xpos - c.leftPressX
+			dy := ypos - c.leftPressY
+			isDrag := dx*dx+dy*dy > 25 // 5px threshold
+			if isDrag {
+				return
+			}
+			pressedButton := c.app.UI().IsPressed(float32(xpos), float32(ypos))
+			if pressedButton != nil {
+				err := pressedButton.HandleClick(float32(xpos), float32(ypos))
+				if err != nil {
+					log.Println("ui pressed error : ", err)
+				}
+				return
+			}
+			c.app.SelectObjectAt(float32(xpos), float32(ypos))
 		}
 	}
 }
@@ -49,7 +68,7 @@ func (c *Controller) mouseMoveCallback(w *glfw.Window, xpos float64, ypos float6
 	}
 
 	if w.GetMouseButton(glfw.MouseButtonMiddle) == glfw.Press {
-		sensitivity := float32(0.4)
+		sensitivity := float32(0.01)
 		c.app.RotateSelectedObject(-yoffset*sensitivity, xoffset*sensitivity, 0)
 	}
 }
